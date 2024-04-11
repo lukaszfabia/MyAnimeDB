@@ -21,7 +21,7 @@ export default function CustomNavbar({ View }: any) {
       <Navbar expand="lg" className="navbar-dark fixed-top" style={bg}>
         <Container>
           <Navbar.Brand>
-            <Link to="/portfolio">MyAnime.db</Link>
+            <Link to="/">MyAnime.db</Link>
           </Navbar.Brand>
           <Navbar.Toggle
             aria-controls="basic-navbar-nav"
@@ -36,28 +36,18 @@ export default function CustomNavbar({ View }: any) {
           </Navbar.Toggle>
           <Navbar.Collapse id="basic-navbar-nav" className="text-center">
             <Nav className="ms-auto">
-              <Nav.Link href="#projects" className="ms-4">
-                Anime
-              </Nav.Link>
-              <Nav.Link href="#about" className="ms-4">
-                Manga
-              </Nav.Link>
-              <Nav.Link href="#faq" className="ms-4">
-                FAQ
-              </Nav.Link>
-              <Nav.Link href="#contact" className="ms-4">
-                Contact
-              </Nav.Link>
+              <Nav.Link href="/anime">Anime</Nav.Link>
+              <Nav.Link href="/manga">Manga</Nav.Link>
               <Form className="d-flex">
                 <FormControl
                   type="search"
                   placeholder="Search..."
-                  className="me-2 ms-4 bg-dark text-white border-warning"
+                  className="me-2 ms-4 bg-dark text-white border-secondary"
                   aria-label="Search"
                 />
-                <Button variant="outline-warning">
+                <Nav.Link>
                   <FontAwesomeIcon icon={faSearch} />
-                </Button>
+                </Nav.Link>
               </Form>
               <View />
             </Nav>

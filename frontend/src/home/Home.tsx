@@ -5,6 +5,9 @@ import CustomNavbar from "../components/navbars/navbar";
 import "../App.css";
 import NotLoggedNavbar from "../components/navbars/notloggedNavbar";
 import LoggedNavbar from "../components/navbars/loggedNavbar";
+import WelcomeContent from "../components/carousel/Caroulsel";
+import MostPopular from "./content/showcase";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -12,18 +15,16 @@ export default function Home() {
     fetchData("mess").then((data) => setData(data));
   }, []);
   return (
-    <Container className="App">
+    <div className="py-1 text-white">
       <Row>
         <Col>
-          <CustomNavbar View={LoggedNavbar}></CustomNavbar>
+          <CustomNavbar View={NotLoggedNavbar}></CustomNavbar>
         </Col>
       </Row>
-      <Row className="py-5 mt-5">
-        <Col>
-          <h1>Home</h1>
-          {data}
-        </Col>
-      </Row>
-    </Container>
+      <WelcomeContent />
+      <hr />
+      <MostPopular />
+      <Footer />
+    </div>
   );
 }

@@ -1,0 +1,34 @@
+.toggler {
+  background-color: black;
+}
+
+.toggler a {
+  color: white;
+  text-decoration: none;
+  font-family: "Poppins", sans-serif;
+  transition: ease-in-out 0.3s;
+}
+
+.toggler a:hover {
+  transition: ease-in-out 0.3s;
+  color: black;
+  background-color: white;
+}
+
+.togglerIcon {
+  background-color: black !important;
+  color: white;
+  transition: ease-in-out 0.3s;
+  border: 1px solid black !important;
+}
+
+.togglerIcon:hover {
+  background-color: black;
+  transition: ease-in-out 0.3s;
+  border: 1px solid gray !important;
+}
+
+.toggler hr {
+  background-color: grey;
+  transition: ease-in-out 0.3s;
+}
