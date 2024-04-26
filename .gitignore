@@ -1,2 +1,13 @@
 __pycache__
-*.sqlite3
+
+*.aux
+*.log
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.out
+*.toc
+*.bbl
+*.synctex(busy)
+
+*.png

@@ -23,7 +23,7 @@ short_html = """
 <body>
     <div style="margin: 100px;">
         <h1>Welcome to my anime db api</h1>
-        <h2>check all routes <a href="http://127.0.0.1:8000/api/">here</a></h2>
+        <h2>check all routes <a href="/api/">here</a></h2>
         <h2>created by: <a href="https://github.com/lukaszfabia">lukasz fabia</a></h2>
     </div>
 </body>
