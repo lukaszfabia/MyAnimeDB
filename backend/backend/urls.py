@@ -1,24 +1,42 @@
-"""
-URL configuration for backend project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
 from django.contrib import admin
-from django.urls import path
-from api.views import index
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.http import JsonResponse
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+short_html = """
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime api</title>
+</head>
+
+<body>
+    <div style="margin: 100px;">
+        <h1>Welcome to my anime db api</h1>
+        <h2>check all routes <a href="http://127.0.0.1:8000/api/">here</a></h2>
+        <h2>created by: <a href="https://github.com/lukaszfabia">lukasz fabia</a></h2>
+    </div>
+</body>
+
+</html>
+"""
+
+def welcome(request):
+    return HttpResponse(short_html, content_type='text/html')
 
 urlpatterns = [
-    path("", index),  # Nowa ścieżka dla strony głównej
-]
+    path('', welcome, name='index'),
+    path('admin/', admin.site.urls),
+    path('api/', include('api.urls')), # sending a user to api.urls file
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

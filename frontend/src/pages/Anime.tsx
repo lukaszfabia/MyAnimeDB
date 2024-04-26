@@ -1,6 +1,6 @@
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import LoggedNavbar from "../components/navbars/loggedNavbar";
-import CustomNavbar from "../components/navbars/navbar";
+import CustomNavbar from "./Navigation";
 import "./favanime.css";
 import NotLoggedNavbar from "../components/navbars/notloggedNavbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navbar, Container, Nav, Button, FormControl } from "react-bootstrap";
 // import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Form, Link } from "react-router-dom";
 import "./navbar.css";
+import LoggedNavbar from "../components/navbars/loggedNavbar";
+import NotLoggedNavbar from "../components/navbars/notloggedNavbar";
 
-export default function CustomNavbar({ View }: any) {
+export default function CustomNavbar({ isLogged }: { isLogged?: boolean }) {
   const bg = {
     backgroundColor: "black",
   };
@@ -15,6 +17,15 @@ export default function CustomNavbar({ View }: any) {
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
   };
+
+  const [isAuth, setIsAuth] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem('access_token') !== null) {
+      setIsAuth(true);
+    }
+  }, [isAuth]);
+
+  // console.log(isAuth);
 
   return (
     <header>
@@ -49,7 +60,11 @@ export default function CustomNavbar({ View }: any) {
                   <FontAwesomeIcon icon={faSearch} />
                 </Nav.Link>
               </Form>
-              <View />
+              {isAuth ? (
+                <LoggedNavbar />
+              ) : (
+                <NotLoggedNavbar />
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>

@@ -34,7 +34,7 @@ export default function LoggedNavbar() {
               <FontAwesomeIcon icon={faCog} /> settings
             </Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item href="/profile/logout">
+            <Dropdown.Item href="/logout">
               <FontAwesomeIcon icon={faSignOut} /> logout
             </Dropdown.Item>
           </DropdownMenu>

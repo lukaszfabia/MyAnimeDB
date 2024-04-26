@@ -1,11 +1,13 @@
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
-import LoggedNavbar from "../components/navbars/loggedNavbar";
-import CustomNavbar from "../components/navbars/navbar";
-import React, { useState } from "react";
+import CustomNavbar from "./Navigation";
+import React, { useEffect, useState } from "react";
 import "./favanime.css";
 import Footer from "../components/Footer";
+import { useParams } from "react-router-dom";
+import { fetchData } from "../scripts";
+import NoPage from "./NotFoundPage";
 
-const ProfileData = () => {
+const ProfileData = ({ username, email, avatar, bio }: { username: string, email: string, avatar?: string, bio: string }) => {
   return (
     <Container
       className="p-5"
@@ -14,15 +16,14 @@ const ProfileData = () => {
         borderRadius: "50px",
       }}
     >
-      <h2 className="text-center">dr Piotr Napierała</h2>
+      <h2 className="text-center">{username}</h2>
       <hr />
       <Row className="d-flex justify-content-center align-items-center mb-4">
         <img
-          src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"
+          src={avatar}
           alt="profile"
-          className="rounded-circle img-fluid"
-          width={150}
-          height="auto"
+          className="img-fluid"
+          style={{ width: "250px", height: "auto" }}
         />
       </Row>
       <hr />
@@ -30,11 +31,11 @@ const ProfileData = () => {
         <h2>
           <strong>Bio</strong>
         </h2>
-        <p>wale baranka w meblo scianke</p>
+        <p>{bio}</p>
         <h3>
           <strong>Email</strong>
         </h3>
-        <p>/email/</p>
+        <p>{email}</p>
       </Row>
       <hr />
       <Row className="py-4">
@@ -133,13 +134,41 @@ const FavAnime = () => {
 };
 
 export default function Profile() {
+  const { username } = useParams<string>();
+  const [email, setEmail] = useState('');
+  const [avatar, setAvatar] = useState('');
+  const [bio, setBio] = useState<string>('');
+  const [userNotFound, setUserNotFound] = useState(false);
+
+  useEffect(() => {
+    fetchData(`api/getuser/${username}`)
+      .then((data) => {
+        if (data.length === 0) {
+          setUserNotFound(true);
+        } else {
+          setEmail(data.email);
+          setAvatar("http://127.0.0.1:8000/" + data.avatar);
+          setBio(data.bio);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+      });
+  }, [username]);
+
+  if (userNotFound) {
+    return <NoPage />;
+  }
+
+  // console.log(avatar)
+
   return (
     <>
-      <CustomNavbar View={LoggedNavbar} />
+      <CustomNavbar isLogged={true} />
       <Container className="text-white py-5 mt-5">
         <Row className="d-flex justify-content-center align-items-center">
           <Col lg={4}>
-            <ProfileData />
+            <ProfileData username={username || ''} email={email || ''} avatar={avatar || ''} bio={bio || ''} />
           </Col>
           <Col lg={8}>
             <Stats />

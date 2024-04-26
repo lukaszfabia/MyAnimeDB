@@ -1,11 +1,15 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import "./App.css";
-import Home from "../src/home/Home";
-import React from "react";
-import LoginForm from "./components/forms/login";
-import RegisterForm from "./components/forms/register";
-import Profile from "./display/Profile";
-import Anime from "./display/Anime";
+import Home from "../src/pages/Home";
+import React, { useState } from "react";
+import LoginForm from "./pages/login";
+import RegisterForm from "./pages/register";
+import Profile from "./pages/Profile";
+import Anime from "./pages/Anime";
+import CustomNavbar from './pages/Navigation';
+import { AuthProvider } from './context/AuthProvider';
+import NoPage from './pages/NotFoundPage';
+import Logout from './pages/Logout';
 
 const router = createBrowserRouter([
   {
@@ -26,14 +30,23 @@ const router = createBrowserRouter([
     element: <div>search</div>,
   },
   {
-    path: "/profile/:id",
+    path: "/profile/:username",
     element: <Profile />,
   },
   {
     path: "/anime/:id",
     element: <Anime />,
   },
+  {
+    path: "*",
+    element: <NoPage />,
+  },
+  {
+    path: "/logout",
+    element: <Logout />
+  }
 ]);
+
 
 export default function App() {
   return (

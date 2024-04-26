@@ -1,12 +1,13 @@
-const fetchData = async (kind: string, route = "") => {
+import axios from 'axios';
+
+const fetchData = async (route = "") => {
   try {
-    const response = await fetch("http://127.0.0.1:8000/" + route);
-    const jsonData = await response.json();
-    return jsonData[kind];
+    const response = await axios.get("http://127.0.0.1:8000/" + route);
+    return response.data;
   } catch (error) {
-    console.error("Error fetching data:", error);
     return [];
   }
 };
 
 export { fetchData };
+
