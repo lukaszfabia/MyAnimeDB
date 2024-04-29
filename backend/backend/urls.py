@@ -1,14 +1,12 @@
 from django.contrib import admin
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.http import HttpResponse
 from django.urls import path, include
-from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.http import JsonResponse
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+from backend import settings
 
 short_html = """
 <!DOCTYPE html>
@@ -31,12 +29,20 @@ short_html = """
 </html>
 """
 
-def welcome(request):
-    return HttpResponse(short_html, content_type='text/html')
+
+class MapOfAServer(APIView):
+    """General view of the server"""
+
+    def get(self, request):
+        endpoints = [
+            {"route": "api/", "description": "Main view of all routes in the API"},
+            {"route": "admin/", "description": "Admin page"},
+        ]
+        return Response(endpoints)
+
 
 urlpatterns = [
-    path('', welcome, name='index'),
-    path('admin/', admin.site.urls),
-    path('api/', include('api.urls')), # sending a user to api.urls file
+    path("", MapOfAServer.as_view(), name="home_view"),
+    path("admin/", admin.site.urls),
+    path("api/", include("api.urls")),  # sending a user to api.urls file
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

@@ -148,7 +148,7 @@ const RatingManage = () => {
 export default function Anime() {
   return (
     <>
-      <CustomNavbar View={NotLoggedNavbar} />
+      <CustomNavbar />
       <Container className="text-white py-5 mt-5">
         <Row className="d-flex justify-content-center align-items-center">
           <Col lg={4}>

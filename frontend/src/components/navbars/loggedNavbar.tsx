@@ -1,6 +1,5 @@
 import {
   Nav,
-  Button,
   Dropdown,
   DropdownToggle,
   DropdownMenu,
@@ -12,19 +11,17 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// Remove the import statement for styles
-// import { styles } from "./navbar.css";
 import styles from "../navbars/toggler.module.css";
 
-export default function LoggedNavbar() {
+
+export default function LoggedNavbar({ username }: { username: string }) {
   return (
     <Nav.Item className="ms-2 mt-3 mt-lg-auto">
       <Dropdown>
         <DropdownToggle className={styles.togglerIcon}>
-          <FontAwesomeIcon icon={faUser} />
-          {/* name of profile */}
+          {username}
           <DropdownMenu className={styles.toggler} align="end">
-            <Dropdown.Item href="/profile">
+            <Dropdown.Item href={`/profile/${username}`}>
               <FontAwesomeIcon icon={faUser} /> profile
             </Dropdown.Item>
             <Dropdown.Item href="/profile/mylist">

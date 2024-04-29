@@ -1,8 +1,6 @@
 import { Nav, Dropdown, DropdownToggle, DropdownMenu } from "react-bootstrap";
 import {
   faSignIn,
-  faUserAlt,
-  faUserAltSlash,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

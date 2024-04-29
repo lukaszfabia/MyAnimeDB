@@ -1,17 +1,18 @@
 from django.contrib import admin
 
-from api.serializers import AnimeForm
 
-from .models import UserProfile, Anime
+from .models import UserProfile, Anime, UsersAnime
 from django.contrib import admin
-from .models import UserProfile, Anime
+from .forms import AnimeCollectionForm, AnimeForm
 
-#dashboard admina
-
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email', 'avatar', 'bio']  # Display selected fields in the admin panel
 
 @admin.register(Anime)
 class AnimeAdmin(admin.ModelAdmin):
     form = AnimeForm
+
+
+@admin.register(UsersAnime)
+class CollectionAdmin(admin.ModelAdmin):
+    """to development purposes only"""
+
+    form = AnimeCollectionForm

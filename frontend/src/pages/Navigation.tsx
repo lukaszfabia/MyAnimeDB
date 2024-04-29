@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { Navbar, Container, Nav, Button, FormControl } from "react-bootstrap";
-// import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { Form, Link } from "react-router-dom";
+import { Form, Link, useParams, useSubmit } from "react-router-dom";
 import "./navbar.css";
 import LoggedNavbar from "../components/navbars/loggedNavbar";
 import NotLoggedNavbar from "../components/navbars/notloggedNavbar";
+import { useAuth } from "../components/ProtectedRoute";
+import { ACCESS_TOKEN } from "../constants/const";
+import api from "../scripts/api";
 
-export default function CustomNavbar({ isLogged }: { isLogged?: boolean }) {
+export default function CustomNavbar() {
   const bg = {
     backgroundColor: "black",
   };
@@ -18,14 +20,21 @@ export default function CustomNavbar({ isLogged }: { isLogged?: boolean }) {
     setIsOpen(!isOpen);
   };
 
-  const [isAuth, setIsAuth] = useState(false);
-  useEffect(() => {
-    if (localStorage.getItem('access_token') !== null) {
-      setIsAuth(true);
-    }
-  }, [isAuth]);
+  const isLogged = !!localStorage.getItem(ACCESS_TOKEN);
 
-  // console.log(isAuth);
+  // console.log(localStorage.getItem(ACCESS_TOKEN));
+
+  console.log(isLogged);
+
+  api.get('/api/user-data/', {
+  }).then((response) => {
+    localStorage.setItem('username', response.data.username);
+  }).catch((error) => {
+    console.log(error);
+  });
+
+  const username = localStorage.getItem('username');
+
 
   return (
     <header>
@@ -60,8 +69,8 @@ export default function CustomNavbar({ isLogged }: { isLogged?: boolean }) {
                   <FontAwesomeIcon icon={faSearch} />
                 </Nav.Link>
               </Form>
-              {isAuth ? (
-                <LoggedNavbar />
+              {isLogged ? (
+                <LoggedNavbar username={username ?? ''} />
               ) : (
                 <NotLoggedNavbar />
               )}

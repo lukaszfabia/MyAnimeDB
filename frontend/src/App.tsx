@@ -1,29 +1,37 @@
-import { BrowserRouter as Router, Route, Routes, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, createBrowserRouter, createRoutesFromElements, RouterProvider, Outlet } from 'react-router-dom'
 import "./App.css";
 import Home from "../src/pages/Home";
-import React, { useState } from "react";
 import LoginForm from "./pages/login";
 import RegisterForm from "./pages/register";
-import Profile from "./pages/Profile";
-import Anime from "./pages/Anime";
-import CustomNavbar from './pages/Navigation';
-import { AuthProvider } from './context/AuthProvider';
 import NoPage from './pages/NotFoundPage';
+import CustomNavbar from './pages/Navigation';
+import ProtectedRoute from './components/ProtectedRoute';
+import Profile from './pages/Profile';
+import React from 'react';
 import Logout from './pages/Logout';
+import Anime from './pages/Anime';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <>
+      <CustomNavbar />
+      <Home />
+    </>,
     errorElement: <div>404 Not Found</div>,
   },
   {
     path: "/login",
-    element: <LoginForm />,
+    element: <>
+      <CustomNavbar />
+      <LoginForm />
+    </>,
   },
   {
     path: "/register",
-    element: <RegisterForm />,
+    element: <>
+      <CustomNavbar />
+      <RegisterForm /></>,
   },
   {
     path: "/search",
@@ -31,7 +39,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/profile/:username",
-    element: <Profile />,
+    element: <>
+      <CustomNavbar />
+      <Profile />
+    </>,
   },
   {
     path: "/anime/:id",
@@ -48,10 +59,20 @@ const router = createBrowserRouter([
 ]);
 
 
+
+// const router = createBrowserRouter(
+//   createRoutesFromElements(
+//     <Route path="/" element={<Home />}>
+//       <Route path="/login" element={<LoginForm />} />
+//       <Route path="/register" element={<RegisterForm />} />
+//       <Route path="/profile/:username" element={<Profile />} />
+//       <Route path="*" element={<NoPage />} />
+//     </Route>
+//   )
+// );
+
 export default function App() {
   return (
-    <React.StrictMode>
-      <RouterProvider router={router} />
-    </React.StrictMode>
+    <RouterProvider router={router} />
   );
 }

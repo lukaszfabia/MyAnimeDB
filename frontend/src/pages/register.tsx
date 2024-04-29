@@ -8,21 +8,28 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+
+const regexForPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
 const RegisterForm = () => {
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File>(new File([], ""));
 
   const [errorInfo, setErrorInfo] = useState<string>("");
 
   const [passwordError, setPasswordError] = useState<string>("");
 
+  const navigate = useNavigate();
+
+  // for password validation
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const potentialPassword = e.target.value;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!passwordRegex.test(potentialPassword)) {
+    if (!regexForPassword.test(potentialPassword)) {
       setPasswordError(
         "Password must be at least 8 characters long and contain at least one letter and one number"
       );
@@ -37,36 +44,42 @@ const RegisterForm = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const user = {
+      username: username,
+      email: email,
+      password: password
+    }
     const formData = new FormData();
-    formData.append("username", username);
-    formData.append("email", email);
-    formData.append("password", password);
+    formData.append("user.username", user.username);
+    formData.append("user.email", user.email);
+    formData.append("user.password", user.password);
     if (file) {
       formData.append("avatar", file);
+    } else {
+      formData.append("avatar", "");
     }
 
-    fetch("http://127.0.0.1:8000/api/register/", {
-      method: "POST",
+    formData.append("bio", "change me");
+
+    // Sending data to the backend
+    axios.post("http://127.0.0.1:8000/api/register/", formData, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "multipart/form-data",
       },
-      body: formData,
     })
       .then((response) => {
-        if (response.status === 400) {
-          setErrorInfo("Username or email already exists");
-          let formUsername = document.getElementById("formBasicUsername");
-          formUsername?.classList.add("is-invalid");
-          return;
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("data:", data);
-        window.location.href = `/profile/${data.username}`;
+        navigate(`/profile/${username}`);
       })
       .catch((error) => {
-        console.error("Error:", error);
+        const errorMsg = error.response?.data.error || "An unexpected error occurred";
+        setErrorInfo(errorMsg);
+
+        // Clearing and setting validation state
+        const formUsername = document.getElementById("formBasicUsername");
+        if (formUsername) {
+          formUsername.classList.remove("is-invalid"); // Clear previous state
+          formUsername.classList.add("is-invalid"); // Set current state
+        }
       });
   };
 
@@ -139,7 +152,11 @@ const RegisterForm = () => {
                   }
                 />
               </Form.Group>
-              <Form.Text className="text-warning">{passwordError}</Form.Text>
+              <Form.Text className="text-warning">
+                <p className="text-center">
+                  {passwordError}
+                </p>
+              </Form.Text>
 
               <Form.Group className="py-3">
                 <Form.Control
@@ -149,7 +166,7 @@ const RegisterForm = () => {
                 />
               </Form.Group>
 
-              <div className="d-flex justify-content-center align-items-center mb-4">
+              <div className="d-flex justify-content-center align-items-center mb-5 py-4">
                 <Button
                   variant="outline-light"
                   type="submit"

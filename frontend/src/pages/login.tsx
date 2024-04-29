@@ -4,10 +4,7 @@ import {
   Col,
   Form,
   Button,
-  FormGroup,
-  FormLabel,
 } from "react-bootstrap";
-import CustomNavbar from "./Navigation";
 import { useState } from "react";
 import axios from "axios";
 
@@ -34,7 +31,6 @@ const LoginForm = () => {
 
   return (
     <>
-      <CustomNavbar isLogged={false} />
       <Container className="mt-5 text-white py-5 rounded-5">
         <Row className="justify-content-center">
           <Col xs={10} sm={8} md={6}>

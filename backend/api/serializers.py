@@ -1,70 +1,51 @@
-from typing import Optional
-from rest_framework.response import Response
-from rest_framework import serializers, status
-from api.models import UserProfile, Anime    
-from django import forms
+from rest_framework import serializers
+from api.models import Anime, UserProfile
+from django.contrib.auth.models import User
 
 DEFAULT_AVATAR = "avatars/def.png"
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserProfile
-        fields = ['username', 'email', 'password', 'avatar', 'bio']
-        extra_kwargs = {'password': {'write_only': True}}
-        
+        model = User
+        fields = ["username", "email", "password"]
+        extra_kwargs = {"password": {"write_only": True}}
 
-    def create(self, data):
-        username = data.get('username')
-        email = data.get('email')
-        password = data.get('password')
-        avatar: str = data.get('avatar') if data.get('avatar') else DEFAULT_AVATAR
-        
-        if not username or not email or not password:
-            return Response(
-                {"error": "Please provide username, email and password"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        elif UserProfile.objects.filter(username=username).exists():
-            return Response(
-                {"error": "Username already taken"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        else:
-            new_user = UserProfile.objects.create(
-                username=username,
-                email=email,
-                avatar=avatar,
-                password=password   
-            )
-            return Response(
-                {
-                    "message": "User created successfully",
-                    "username": f"{new_user.username}",
-                },
-                status=status.HTTP_201_CREATED
-            )
-    
-    
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = UserProfile
+        fields = ["user", "avatar", "bio"]
+
+    def create(self, validated_data):
+        user_data = validated_data.pop("user")
+        user = UserSerializer().create(user_data)
+        avatar = (
+            validated_data.get("avatar")
+            if validated_data.get("avatar")
+            else DEFAULT_AVATAR
+        )
+        profile = UserProfile.objects.create(
+            user=user, avatar=avatar, bio=validated_data.get("bio", "change me")
+        )
+        return profile
+
+
 class AnimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anime
-        fields = '__all__'
-        
-    def create(self, validated_data):
-        anime = Anime.objects.create(**validated_data)
-        return anime
-
-
-class AnimeForm(forms.ModelForm):
-    class Meta:
-        model = Anime
-        fields = '__all__'
-        widgets = {
-            'id_anime': forms.HiddenInput(),
-            'type': forms.Select(choices=Anime.ANIME_TYPE),
-        }
-
+        fields = "__all__"
 
     def create(self, validated_data):
         anime = Anime.objects.create(**validated_data)
         return anime
+
+
+# class UserAnimeSerializer(serializers.ModelSerializer):
+#     class Meta:
