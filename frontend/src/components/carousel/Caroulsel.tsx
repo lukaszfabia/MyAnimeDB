@@ -13,7 +13,7 @@ const slides = (placeholder = imgUrl) => {
     {
       title: "Create accout",
       description: "to follow your favorite anime and manga series!",
-      imgUrl: "https://wallpapercave.com/wp/wp12468516.jpg",
+      imgUrl: placeholder,
     },
     {
       title: "Discover",

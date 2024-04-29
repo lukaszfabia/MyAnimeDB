@@ -1,6 +1,6 @@
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import CustomNavbar from "./Navigation";
-import React, { useEffect, useState } from "react";
+import React, { Children, useEffect, useState } from "react";
 import "./favanime.css";
 import Footer from "../components/Footer";
 import { useParams, useSubmit } from "react-router-dom";
@@ -9,7 +9,17 @@ import NoPage from "./NotFoundPage";
 import api from "../scripts/api";
 import axios from "axios";
 
-const ProfileData = ({ username, email, avatar, bio }: { username: string, email: string, avatar?: string, bio: string }) => {
+const ProfileData = ({
+  username,
+  email,
+  avatar,
+  bio,
+}: {
+  username: string;
+  email: string;
+  avatar?: string;
+  bio: string;
+}) => {
   return (
     <Container
       className="p-5"
@@ -136,59 +146,37 @@ const FavAnime = () => {
 };
 
 export default function Profile() {
-  const { username } = useParams<string>();
-  const [email, setEmail] = useState('');
-  const [avatar, setAvatar] = useState('');
-  const [bio, setBio] = useState<string>('');
+  const [username, setUsername] = useState<string>("");
 
-  // useEffect(() => {
-  //   fetchData(`api/getuser/${username}`)
-  //     .then((data) => {
-  //       if (data.length === 0) {
-  //         setUserNotFound(true);
-  //       } else {
-  //         setEmail(data.email);
-  //         setAvatar("http://127.0.0.1:8000/" + data.avatar);
-  //         setBio(data.bio);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching user data:", error);
-  //     });
-  // }, [username]);
+  const [email, setEmail] = useState<string>("");
+  const [avatar, setAvatar] = useState<string>("");
+  const [bio, setBio] = useState<string>("");
 
-  const [error, setError] = useState<boolean>(false);
+  const { name } = useParams();
 
-  useEffect(() => {
-    api.get(`api/user-data/`, {
+  api
+    .get(`/api/user/name/${name}`)
+    .then((response) => {
+      setUsername(response.data.user.username);
+      setEmail(response.data.user.email);
+      setAvatar(import.meta.env.VITE_API_URL + response.data.avatar);
+      setBio(response.data.bio);
     })
-      .then((response) => {
-        console.log(response.status);
-        if (response.statusText === 'Not Found') {
-          return;
-        }
-        setEmail(response.data.user.email);
-        setAvatar(`${import.meta.env.VITE_API_URL}/${response.data.avatar}`);
-        setBio(response.data.bio);
-      })
-      .catch((error) => {
-        setError(true);
-      });
-  }, [username]);
-
-  if (error) {
-    return <NoPage />;
-  }
-
-  // Render the rest of your component here
-  // console.log(avatar)
+    .catch((error) => {
+      return <NoPage />;
+    });
 
   return (
     <>
       <Container className="text-white py-5 mt-5">
         <Row className="d-flex justify-content-center align-items-center">
           <Col lg={4}>
-            <ProfileData username={username || ''} email={email || ''} avatar={avatar || ''} bio={bio || ''} />
+            <ProfileData
+              username={username || ""}
+              email={email || ""}
+              avatar={avatar || import.meta.env.VITE_DEFAULT_AVATAR}
+              bio={bio || ""}
+            />
           </Col>
           <Col lg={8}>
             <Stats />

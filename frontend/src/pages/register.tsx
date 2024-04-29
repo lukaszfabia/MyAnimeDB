@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import api from "../scripts/api";
 
 const regexForPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
@@ -47,8 +47,8 @@ const RegisterForm = () => {
     const user = {
       username: username,
       email: email,
-      password: password
-    }
+      password: password,
+    };
     const formData = new FormData();
     formData.append("user.username", user.username);
     formData.append("user.email", user.email);
@@ -62,16 +62,18 @@ const RegisterForm = () => {
     formData.append("bio", "change me");
 
     // Sending data to the backend
-    axios.post("http://127.0.0.1:8000/api/register/", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
+    api
+      .post("http://127.0.0.1:8000/api/register/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((response) => {
         navigate(`/profile/${username}`);
       })
       .catch((error) => {
-        const errorMsg = error.response?.data.error || "An unexpected error occurred";
+        const errorMsg =
+          error.response?.data.error || "An unexpected error occurred";
         setErrorInfo(errorMsg);
 
         // Clearing and setting validation state
@@ -153,9 +155,7 @@ const RegisterForm = () => {
                 />
               </Form.Group>
               <Form.Text className="text-warning">
-                <p className="text-center">
-                  {passwordError}
-                </p>
+                <p className="text-center">{passwordError}</p>
               </Form.Text>
 
               <Form.Group className="py-3">

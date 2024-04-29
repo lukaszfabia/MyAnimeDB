@@ -1,33 +1,42 @@
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-} from "react-bootstrap";
-import { useState } from "react";
-import axios from "axios";
+  Children,
+  ReactNode,
+  ReactPortal,
+  createContext,
+  useContext,
+  useState,
+} from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../scripts/api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants/const";
+import { UserContext } from "../UserProvider";
 
 const LoginForm = () => {
+  const { user, setUser } = useContext<any>(UserContext);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const sumbit = (e: any) => {
     e.preventDefault();
-    axios.post('http://127.0.0.1:8000/api/token/', {
-      username: username,
-      password: password
-    })
+    api
+      .post("/api/token/", {
+        username: username,
+        password: password,
+      })
       .then((response) => {
-        localStorage.setItem('access_token', response.data.access);
-        localStorage.setItem('refresh_token', response.data.refresh);
-        window.location.href = '/';
+        localStorage.setItem(ACCESS_TOKEN, response.data.access);
+        localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
+        localStorage.setItem("isLogged", "true");
+        setUser(response.data.user);
+        navigate(`/profile/${username}`);
       })
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
   return (
     <>

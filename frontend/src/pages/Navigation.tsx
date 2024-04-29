@@ -20,22 +20,6 @@ export default function CustomNavbar() {
     setIsOpen(!isOpen);
   };
 
-  const isLogged = !!localStorage.getItem(ACCESS_TOKEN);
-
-  // console.log(localStorage.getItem(ACCESS_TOKEN));
-
-  console.log(isLogged);
-
-  api.get('/api/user-data/', {
-  }).then((response) => {
-    localStorage.setItem('username', response.data.username);
-  }).catch((error) => {
-    console.log(error);
-  });
-
-  const username = localStorage.getItem('username');
-
-
   return (
     <header>
       <Navbar expand="lg" className="navbar-dark fixed-top" style={bg}>
@@ -69,8 +53,10 @@ export default function CustomNavbar() {
                   <FontAwesomeIcon icon={faSearch} />
                 </Nav.Link>
               </Form>
-              {isLogged ? (
-                <LoggedNavbar username={username ?? ''} />
+              {localStorage.getItem("isLogged") ? (
+                <LoggedNavbar
+                  username={localStorage.getItem("username") ?? ""}
+                />
               ) : (
                 <NotLoggedNavbar />
               )}

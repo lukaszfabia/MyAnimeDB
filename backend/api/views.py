@@ -53,14 +53,13 @@ class GetRoutesView(APIView):
         routes = [
             {"route": "api/token/", "description": "Get JWT token"},
             {"route": "api/token/refresh/", "description": "Refresh JWT token"},
-            {"route": "api/api-auth/", "description": "Login page"},
             {"route": "api/register/", "description": "Register a user"},
             {
-                "route": "api/getuser/<str:username>",
-                "description": "Get a user by username",
+                "route": "api/user/<str:username>",
+                "description": "Get a users info like username, email, bio, avatar, ...",
             },
             {
-                "route": "api/getanime/<str:title>",
+                "route": "api/anime/<str:title>",
                 "description": "Get an anime by title",
             },
             {"route": "api/user-data/", "description": "Get user data"},
@@ -75,7 +74,6 @@ class UserDataView(APIView):
     def get(self, request, *args, **kwargs):
         auth_header = request.headers.get("Authorization")
         token = auth_header.replace("Bearer ", "") if auth_header else ""
-        print(token)
         try:
             UntypedToken(token)
         except (InvalidToken, TokenError) as e:
@@ -84,16 +82,27 @@ class UserDataView(APIView):
 
         id = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"]).get("user_id")
 
-        user = UserProfile.objects.get(user__id=id)
-        return Response(
-            {
-                "username": user.user.username,
-                # "email": user.user.email,
-                # "avatar": user.avatar,
-                # "bio": user.bio,
-            },
-            status=status.HTTP_200_OK,
-        )
+        try:
+            user = UserProfile.objects.get(user__id=id)
+            serializer = UserProfileSerializer(user)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        except UserProfile.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class SettingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({"msg": "get method"})
+
+    def put(self, request):
+        return Response({"msg": "put method "})
 
 
 #### endpoints with getting data
@@ -101,12 +110,13 @@ class UserDataView(APIView):
 
 @api_view(["GET"])
 def get_anime_by_title(request, title):
-    try:
-        anime = Anime.objects.get(title=title)
-        serializer = AnimeSerializer(anime)
-        return Response(serializer.data)
-    except Anime.DoesNotExist:
-        return Response({"error": "Anime not found"}, status=status.HTTP_404_NOT_FOUND)
+    animes = Anime.objects.filter(title__contains=title)
+    if not animes:
+        return Response(
+            {"error": f"not found any of them with {title}"}, status.HTTP_404_NOT_FOUND
+        )
+    serializers = AnimeSerializer(animes, many=True)
+    return Response(serializers.data, status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -114,6 +124,16 @@ def get_user_by_id(request, id):
     try:
         searched_user = UserProfile.objects.get(user__id=id)
         serializer = UserProfileSerializer(searched_user)
+        return Response(serializer.data)
+    except UserProfile.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["GET"])
+def get_user(request, username):
+    try:
+        user = UserProfile.objects.get(user__username=username)
+        serializer = UserProfileSerializer(user)
         return Response(serializer.data)
     except UserProfile.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
