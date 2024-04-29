@@ -8,11 +8,10 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import api from "../scripts/api";
+import { tryCreateAccount, validatePassword } from "../scripts";
 
-const regexForPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
 const RegisterForm = () => {
   const [username, setUsername] = useState<string>("");
@@ -26,65 +25,17 @@ const RegisterForm = () => {
 
   const navigate = useNavigate();
 
-  // for password validation
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const potentialPassword = e.target.value;
-    if (!regexForPassword.test(potentialPassword)) {
-      setPasswordError(
-        "Password must be at least 8 characters long and contain at least one letter and one number"
-      );
-      document.getElementById("submit")?.setAttribute("disabled", "true");
-    } else {
-      setPasswordError("");
-      setPassword(potentialPassword);
-      document.getElementById("submit")?.removeAttribute("disabled");
-    }
-  };
+    validatePassword(e, setPasswordError, setPassword);
+  }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>, username, password, email, avatar) => {
+    tryCreateAccount(e, username, email, password, avatar);
+  }
 
-    const user = {
-      username: username,
-      email: email,
-      password: password,
-    };
-    const formData = new FormData();
-    formData.append("user.username", user.username);
-    formData.append("user.email", user.email);
-    formData.append("user.password", user.password);
-    if (file) {
-      formData.append("avatar", file);
-    } else {
-      formData.append("avatar", "");
-    }
 
-    formData.append("bio", "change me");
 
-    // Sending data to the backend
-    api
-      .post("http://127.0.0.1:8000/api/register/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        navigate(`/profile/${username}`);
-      })
-      .catch((error) => {
-        const errorMsg =
-          error.response?.data.error || "An unexpected error occurred";
-        setErrorInfo(errorMsg);
-
-        // Clearing and setting validation state
-        const formUsername = document.getElementById("formBasicUsername");
-        if (formUsername) {
-          formUsername.classList.remove("is-invalid"); // Clear previous state
-          formUsername.classList.add("is-invalid"); // Set current state
-        }
-      });
-  };
-
+  // for handling file upload
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);

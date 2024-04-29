@@ -1,42 +1,8 @@
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import {
-  Children,
-  ReactNode,
-  ReactPortal,
-  createContext,
-  useContext,
-  useState,
-} from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../scripts/api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants/const";
-import { UserContext } from "../UserProvider";
+import { useAuth } from "../components/context/AuthContext";
 
 const LoginForm = () => {
-  const { user, setUser } = useContext<any>(UserContext);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
-  const navigate = useNavigate();
-
-  const sumbit = (e: any) => {
-    e.preventDefault();
-    api
-      .post("/api/token/", {
-        username: username,
-        password: password,
-      })
-      .then((response) => {
-        localStorage.setItem(ACCESS_TOKEN, response.data.access);
-        localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
-        localStorage.setItem("isLogged", "true");
-        setUser(response.data.user);
-        navigate(`/profile/${username}`);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const { login } = useAuth();
 
   return (
     <>
@@ -44,18 +10,14 @@ const LoginForm = () => {
         <Row className="justify-content-center">
           <Col xs={10} sm={8} md={6}>
             <h1 className="text-center mb-4">Login</h1>
-            <Form onSubmit={sumbit}>
+            <Form onSubmit={login}>
               <Form.Group controlId="formBasicUsername" className="mb-4">
                 <Form.Control
                   type="text"
                   name="username"
                   placeholder="enter username..."
                   required
-                  value={username}
                   className="bg-dark text-white border-1 border-secondary"
-                  onChange={(e) => {
-                    setUsername(e.target.value);
-                  }}
                 />
               </Form.Group>
 
@@ -65,11 +27,7 @@ const LoginForm = () => {
                   name="password"
                   placeholder="enter password..."
                   required
-                  value={password}
                   className="bg-dark text-white border-1 border-secondary"
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                  }}
                 />
               </Form.Group>
 

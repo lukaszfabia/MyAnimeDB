@@ -1,13 +1,10 @@
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
-import CustomNavbar from "./Navigation";
-import React, { Children, useEffect, useState } from "react";
-import "./favanime.css";
-import Footer from "../components/Footer";
-import { useParams, useSubmit } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { fetchData } from "../scripts";
+import Footer from "../components/Footer";
 import NoPage from "./NotFoundPage";
-import api from "../scripts/api";
-import axios from "axios";
+import "./favanime.css";
 
 const ProfileData = ({
   username,
@@ -146,25 +143,25 @@ const FavAnime = () => {
 };
 
 export default function Profile() {
-  const [username, setUsername] = useState<string>("");
-
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [bio, setBio] = useState<string>("");
 
   const { name } = useParams();
 
-  api
-    .get(`/api/user/name/${name}`)
-    .then((response) => {
-      setUsername(response.data.user.username);
-      setEmail(response.data.user.email);
-      setAvatar(import.meta.env.VITE_API_URL + response.data.avatar);
-      setBio(response.data.bio);
-    })
-    .catch((error) => {
+  useEffect(() => {
+    fetchData(`/api/user/${name}`).then((data) => {
+      setUsername(data.user.username);
+      setEmail(data.user.email);
+      setAvatar(import.meta.env.VITE_API_URL + data.avatar);
+      setBio(data.bio);
+    }).catch((error) => {
       return <NoPage />;
-    });
+    }
+    );
+  });
+
 
   return (
     <>

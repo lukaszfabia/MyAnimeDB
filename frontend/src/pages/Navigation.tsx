@@ -6,7 +6,6 @@ import { Form, Link, useParams, useSubmit } from "react-router-dom";
 import "./navbar.css";
 import LoggedNavbar from "../components/navbars/loggedNavbar";
 import NotLoggedNavbar from "../components/navbars/notloggedNavbar";
-import { useAuth } from "../components/ProtectedRoute";
 import { ACCESS_TOKEN } from "../constants/const";
 import api from "../scripts/api";
 
