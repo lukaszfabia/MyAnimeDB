@@ -1,7 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import Home from "../src/pages/Home";
 import LoginForm from "./pages/Login";
@@ -36,10 +33,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: (
-      <>
+      <AuthProvider>
         <CustomNavbar />
         <RegisterForm />
-      </>
+      </AuthProvider>
     ),
   },
   {
@@ -73,7 +70,6 @@ const router = createBrowserRouter([
     element: <Logout />,
   },
 ]);
-
 
 export default function App() {
   return (

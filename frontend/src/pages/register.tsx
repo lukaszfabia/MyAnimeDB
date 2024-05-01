@@ -1,45 +1,17 @@
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  OverlayTrigger,
-  Tooltip,
-} from "react-bootstrap";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../scripts/api";
-import { tryCreateAccount, validatePassword } from "../scripts";
-
+import { validatePassword } from "../scripts";
+import { useAuth } from "../components/context/AuthContext";
 
 const RegisterForm = () => {
-  const [username, setUsername] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [file, setFile] = useState<File>(new File([], ""));
-
-  const [errorInfo, setErrorInfo] = useState<string>("");
 
   const [passwordError, setPasswordError] = useState<string>("");
 
-  const navigate = useNavigate();
+  const { register } = useAuth();
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     validatePassword(e, setPasswordError, setPassword);
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>, username, password, email, avatar) => {
-    tryCreateAccount(e, username, email, password, avatar);
-  }
-
-
-
-  // for handling file upload
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
-    }
   };
 
   return (
@@ -48,39 +20,30 @@ const RegisterForm = () => {
         <Row className="justify-content-center">
           <Col xs={10} sm={8} md={6}>
             <h1 className="text-center mb-4">Create an account</h1>
-            <Form onSubmit={handleSubmit} encType="multipart/form-data">
+            <Form onSubmit={register} encType="multipart/form-data">
               <Form.Group controlId="formBasicUsername" className="mb-4">
-                <OverlayTrigger
-                  placement="right"
-                  show={errorInfo !== ""}
-                  overlay={
-                    <Tooltip id={`tooltip-right`}>
-                      <p className="text-danger">{errorInfo}</p>
-                    </Tooltip>
-                  }
-                >
-                  <Form.Control
-                    type="text"
-                    placeholder="enter username..."
-                    required={true}
-                    className="bg-dark text-white border-1 border-secondary"
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </OverlayTrigger>
+                <Form.Control
+                  type="text"
+                  placeholder="enter username..."
+                  required={true}
+                  className="bg-dark text-white border-1 border-secondary"
+                  name="username"
+                />
               </Form.Group>
               <Form.Group controlId="formBasicEmail" className="mb-4">
                 <Form.Control
                   type="email"
+                  name="email"
                   placeholder="enter e-mail..."
                   required={true}
                   className="bg-dark text-white border-1 border-secondary"
-                  onChange={(e) => setEmail(e.target.value)}
                 />
               </Form.Group>
 
               <Form.Group controlId="formBasicPassword" className="mb-4">
                 <Form.Control
                   type="password"
+                  name="password"
                   placeholder="enter password..."
                   required={true}
                   className="bg-dark text-white border-1 border-secondary"
@@ -112,8 +75,9 @@ const RegisterForm = () => {
               <Form.Group className="py-3">
                 <Form.Control
                   type="file"
-                  onChange={handleChange}
                   className="bg-dark text-white border-1 border-secondary"
+                  id="formFile"
+                  name="avatar"
                 />
               </Form.Group>
 

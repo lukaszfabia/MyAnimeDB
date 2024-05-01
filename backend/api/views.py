@@ -27,7 +27,7 @@ class RegistrationView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         print(request.data)
         fixed_data = request.data.copy()
-        if fixed_data["avatar"] == "":
+        if fixed_data["avatar"] == "" or fixed_data["avatar"] == "undefined":
             fixed_data["avatar"] = None
 
         serializer = self.serializer_class(data=fixed_data)
