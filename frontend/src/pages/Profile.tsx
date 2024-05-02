@@ -151,17 +151,18 @@ export default function Profile() {
   const { name } = useParams();
 
   useEffect(() => {
-    fetchData(`/api/user/${name}`).then((data) => {
-      setUsername(data.user.username);
-      setEmail(data.user.email);
-      setAvatar(import.meta.env.VITE_API_URL + data.avatar);
-      setBio(data.bio);
-    }).catch((error) => {
-      return <NoPage />;
-    }
-    );
+    fetchData(`/api/user/${name}`)
+      .then((data) => {
+        setUsername(data.user.username);
+        setEmail(data.user.email);
+        setAvatar(import.meta.env.VITE_API_URL + data.avatar);
+        setBio(data.bio);
+      })
+      .catch((error) => {
+        console.error(error);
+        return <NoPage />;
+      });
   });
-
 
   return (
     <>

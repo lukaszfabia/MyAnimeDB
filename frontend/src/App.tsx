@@ -9,6 +9,8 @@ import Profile from "./pages/Profile";
 import Logout from "./pages/Logout";
 import Anime from "./pages/Anime";
 import { AuthProvider } from "./components/context/AuthContext";
+import Footer from "./components/Footer";
+import SearchAnime from "./pages/SearchAnime";
 
 const router = createBrowserRouter([
   {
@@ -59,7 +61,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/anime/:id",
-    element: <Anime />,
+    element: (
+      <>
+        <CustomNavbar />
+        <Anime />,
+      </>
+    ),
   },
   {
     path: "*",
@@ -68,6 +75,24 @@ const router = createBrowserRouter([
   {
     path: "/logout",
     element: <Logout />,
+  },
+  {
+    path: "/search",
+    children: [
+      {
+        path: "anime",
+        element: (
+          <>
+            <CustomNavbar />
+            <SearchAnime />
+          </>
+        ),
+      },
+      {
+        path: "manga",
+        element: <h1>Search Manga</h1>,
+      },
+    ],
   },
 ]);
 

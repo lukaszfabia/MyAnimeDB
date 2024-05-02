@@ -39,8 +39,8 @@ export default function CustomNavbar() {
           </Navbar.Toggle>
           <Navbar.Collapse id="basic-navbar-nav" className="text-center">
             <Nav className="ms-auto">
-              <Nav.Link href="/anime">Anime</Nav.Link>
-              <Nav.Link href="/manga">Manga</Nav.Link>
+              <Nav.Link href="/search/anime">Anime</Nav.Link>
+              <Nav.Link href="/search/manga">Manga</Nav.Link>
               <Form className="d-flex">
                 <FormControl
                   type="search"
@@ -52,13 +52,7 @@ export default function CustomNavbar() {
                   <FontAwesomeIcon icon={faSearch} />
                 </Nav.Link>
               </Form>
-              {localStorage.getItem("isLogged") ? (
-                <LoggedNavbar
-                  username={localStorage.getItem("username") ?? ""}
-                />
-              ) : (
-                <NotLoggedNavbar />
-              )}
+              {chooseNavbar()}
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -66,3 +60,19 @@ export default function CustomNavbar() {
     </header>
   );
 }
+
+const chooseNavbar = () => {
+  if (localStorage.getItem("isLogged") || sessionStorage.getItem("isLogged")) {
+    return (
+      <LoggedNavbar
+        username={
+          localStorage.getItem("username") ||
+          sessionStorage.getItem("username") ||
+          ""
+        }
+      />
+    );
+  } else {
+    return <NotLoggedNavbar />;
+  }
+};

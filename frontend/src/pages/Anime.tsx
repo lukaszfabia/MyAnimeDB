@@ -6,6 +6,7 @@ import NotLoggedNavbar from "../components/navbars/notloggedNavbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faPlus, faHeart } from "@fortawesome/free-solid-svg-icons";
 import Footer from "../components/Footer";
+import { fetchData } from "../scripts";
 
 const AnimeData = () => {
   return (

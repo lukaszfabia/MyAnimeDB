@@ -7,8 +7,7 @@ import { useNavigate } from "react-router-dom";
 interface AuthContextProps {
   accessToken: string | null;
   refreshToken: string | null;
-  setTokens: (accessToken: string | null, refreshToken: string | null) => void;
-  login: (e: any) => Promise<void>;
+  login: (e: any, rememberMe: boolean) => Promise<void>;
   register: (e: any) => Promise<void>;
 }
 
@@ -24,16 +23,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     Cookies.get(REFRESH_TOKEN) || null
   );
   const navigate = useNavigate();
-
-  const setTokens = (
-    accessToken: string | null,
-    refreshToken: string | null
-  ) => {
-    localStorage.setItem(ACCESS_TOKEN, accessToken || "");
-    Cookies.set(REFRESH_TOKEN, refreshToken || "");
-    setAccessToken(accessToken);
-    setRefreshToken(refreshToken);
-  };
 
   const register = async (e: any) => {
     e.preventDefault();
@@ -57,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       })
       .then((response) => {
         console.log(response);
-        login(e);
+        login(e, false);
       })
       .catch((error) => {
         console.log(error);
@@ -66,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
   };
 
-  const login = async (e: any) => {
+  const login = async (e: any, rememberMe: boolean) => {
     e.preventDefault();
     const response = await api.post("/api/token/", {
       username: e.target.username.value,
@@ -77,16 +66,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       alert("Invalid credentials");
       return;
     } else {
-      setTokens(response.data.access, response.data.refresh);
-      localStorage.setItem("isLogged", "true");
-      localStorage.setItem("username", e.target.username.value);
+      if (rememberMe) {
+        localStorage.setItem(ACCESS_TOKEN, response.data.access);
+        localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
+        localStorage.setItem("isLogged", "true");
+        localStorage.setItem("username", e.target.username.value);
+      } else {
+        sessionStorage.setItem(ACCESS_TOKEN, response.data.access);
+        sessionStorage.setItem(REFRESH_TOKEN, response.data.refresh);
+        sessionStorage.setItem("isLogged", "true");
+        sessionStorage.setItem("username", e.target.username.value);
+      }
+      setAccessToken(response.data.access);
+      setRefreshToken(response.data.refresh);
       navigate(`/profile/${e.target.username.value}`);
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{ accessToken, refreshToken, setTokens, login, register }}
+      value={{ accessToken, refreshToken, login, register }}
     >
       {children}
     </AuthContext.Provider>

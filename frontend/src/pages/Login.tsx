@@ -4,13 +4,19 @@ import { useAuth } from "../components/context/AuthContext";
 const LoginForm = () => {
   const { login } = useAuth();
 
+  const submit = (e: any) => {
+    e.preventDefault();
+    const isRememberMe = e.target.rememberMe.checked;
+    login(e, isRememberMe);
+  };
+
   return (
     <>
       <Container className="mt-5 text-white py-5 rounded-5">
         <Row className="justify-content-center">
           <Col xs={10} sm={8} md={6}>
             <h1 className="text-center mb-4">Login</h1>
-            <Form onSubmit={login}>
+            <Form onSubmit={submit}>
               <Form.Group controlId="formBasicUsername" className="mb-4">
                 <Form.Control
                   type="text"
@@ -36,6 +42,7 @@ const LoginForm = () => {
                   <Col xs={6}>
                     <Form.Check
                       type="checkbox"
+                      name="rememberMe"
                       label="Remember me"
                       className="text-secondary"
                     />

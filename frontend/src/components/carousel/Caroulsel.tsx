@@ -26,7 +26,7 @@ const slides = (placeholder = imgUrl) => {
 
 export default function WelcomeContent() {
   return (
-    <Carousel className="mt-4 mb-5">
+    <Carousel className="mt-5 mb-5">
       {slides().map((slide, index) => (
         <Carousel.Item key={index} interval={5000}>
           <img className="d-block w-100" src={slide.imgUrl} />
