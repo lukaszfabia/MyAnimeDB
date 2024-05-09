@@ -56,20 +56,21 @@ class GetRoutesView(APIView):
             {"route": "api/register/", "description": "Register a user"},
             {
                 "route": "api/user/<str:username>",
-                "description": "Get a users info like username, email, bio, avatar, ...",
+                "description": "Get a users info like username.",
             },
             {
                 "route": "api/anime/<str:title>",
                 "description": "Get an anime by title",
             },
             {"route": "api/user-data/", "description": "Get user data"},
+            {"route": "api/settings/", "description": "Get or update user settings"},
         ]
 
         return Response(routes)
 
 
 class UserDataView(APIView):
-    # permission_classes = [IsAuthenticated]
+    allowed_methods = ["GET"]
 
     def get(self, request, *args, **kwargs):
         auth_header = request.headers.get("Authorization")
@@ -97,8 +98,11 @@ class UserDataView(APIView):
 
 class SettingsView(APIView):
     permission_classes = [IsAuthenticated]
+    allowed_methods = ["GET", "PUT"]
 
     def get(self, request):
+        token: str = request.headers.get("Authorization")
+        print(token.replace("Bearer ", "") if token else "")
         return Response({"msg": "get method"})
 
     def put(self, request):
@@ -137,6 +141,13 @@ def get_user(request, username):
         return Response(serializer.data)
     except UserProfile.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["GET"])
+def fail(request):
+    return Response(
+        {"error": "This is page does not exists"}, status=status.HTTP_404_NOT_FOUND
+    )
 
 
 #### endpoints with adding data

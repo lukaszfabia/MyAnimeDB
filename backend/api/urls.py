@@ -1,4 +1,4 @@
-from django.urls import path, include, re_path
+from django.urls import path, re_path
 from . import views
 from .views import GetRoutesView, RegistrationView, UserDataView, SettingsView
 
@@ -19,5 +19,5 @@ urlpatterns = [
     path("user-data/", UserDataView.as_view(), name="user_data"),
     path("user/settings/", SettingsView.as_view(), name="settings"),
     # path("add/anime/", AddAnimeView.as_view(), name="add_anime"),
-    re_path(r"^.*$", GetRoutesView.as_view(), name="get_routes"),
+    re_path(r"^.*$", views.fail, name="fail_route"),
 ]
