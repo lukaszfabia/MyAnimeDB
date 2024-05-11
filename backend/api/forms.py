@@ -35,3 +35,20 @@ class AnimeCollectionForm(forms.ModelForm):
     def create(self, validated_data):
         anime = UsersAnime.objects.create(**validated_data)
         return anime
+
+
+class ReviewsForm(forms.ModelForm):
+    """add reviews"""
+
+    class Meta:
+        model = UsersAnime
+        fields = "__all__"
+        widgets = {
+            "user": forms.Select(),
+            "anime": forms.Select(),
+            "review": forms.Textarea(),
+        }
+
+    def create(self, validated_data):
+        review = UsersAnime.objects.create(**validated_data)
+        return review

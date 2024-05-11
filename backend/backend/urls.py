@@ -3,10 +3,14 @@ from django.http import HttpResponse
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.contrib import admin
-from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 
 from backend import settings
+from api.views import RegistrationView
 
 short_html = """
 <!DOCTYPE html>
@@ -30,8 +34,10 @@ short_html = """
 """
 
 
-class MapOfAServer(APIView):
+class MapOfAServer(ListAPIView):
     """General view of the server"""
+
+    permission_classes = [AllowAny]
 
     def get(self, request):
         endpoints = [

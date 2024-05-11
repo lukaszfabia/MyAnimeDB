@@ -129,9 +129,21 @@ class UsersAnime(models.Model):
         ("6", "Masterpiece"),
     ]
 
-    id_anime = models.ForeignKey(Anime, on_delete=models.CASCADE)
+    id_anime = models.ForeignKey(
+        Anime, on_delete=models.CASCADE
+    )  # there should be anime not id anime
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
     state = models.CharField(max_length=20, choices=ANIME_STATE)
     score = models.CharField(max_length=20, choices=SCORE_CHOICES)
     is_favorite = models.BooleanField(default=False)
+
+
+class AnimeReviews(models.Model):
+    id_review = models.AutoField(primary_key=True)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    anime = models.ForeignKey(Anime, on_delete=models.CASCADE)
+    review = models.TextField(max_length=1000)
+
+    def __str__(self):
+        return f"{self.anime} review by {self.user}"

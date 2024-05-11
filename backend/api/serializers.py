@@ -1,5 +1,6 @@
+from typing import Optional
 from rest_framework import serializers
-from api.models import Anime, UserProfile
+from api.models import Anime, AnimeReviews, UserProfile, UsersAnime
 from django.contrib.auth.models import User
 
 DEFAULT_AVATAR = "avatars/def.png"
@@ -23,18 +24,38 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ["user", "avatar", "bio"]
 
+    def is_valid_avatar(self, value: Optional[str]) -> bool:
+        return value != "" and value != "undefined" and value is not None
+
     def create(self, validated_data):
         user_data = validated_data.pop("user")
         user = UserSerializer().create(user_data)
-        avatar = (
-            validated_data.get("avatar")
-            if validated_data.get("avatar")
-            else DEFAULT_AVATAR
-        )
+        if self.is_valid_avatar(validated_data.get("avatar")):
+            avatar = validated_data.get("avatar")
+        else:
+            avatar = DEFAULT_AVATAR
+
         profile = UserProfile.objects.create(
-            user=user, avatar=avatar, bio=validated_data.get("bio", "change me")
+            user=user, avatar=avatar, bio=validated_data.get("bio")
         )
         return profile
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop("user", {})
+        user = instance.user
+        user.username = user_data.get("username", user.username)
+        user.email = user_data.get("email", user.email)
+
+        if "password" in user_data:
+            user.set_password(user_data["password"])
+
+        user.save()
+
+        instance.avatar = validated_data.get("avatar", instance.avatar)
+        instance.bio = validated_data.get("bio", instance.bio)
+        instance.save()
+
+        return instance
 
 
 class AnimeSerializer(serializers.ModelSerializer):
@@ -47,5 +68,39 @@ class AnimeSerializer(serializers.ModelSerializer):
         return anime
 
 
-# class UserAnimeSerializer(serializers.ModelSerializer):
-#     class Meta:
+class UserAnimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsersAnime
+        fields = "__all__"
+
+    def create(self, validated_data):
+        users_anime = UsersAnime.objects.create(**validated_data)
+        return users_anime
+
+    def update(self, instance, validated_data):
+        instance.id_anime = validated_data.get("id_anime", instance.id_anime)
+        instance.user = validated_data.get("user", instance.user)
+        instance.state = validated_data.get("state", instance.state)
+        # instance.score = validated_data.get("score", instance.score)
+        if "Plan to watch" not in validated_data.get("state"):
+            instance.score = validated_data.get("score", instance.score)
+        instance.is_favorite = validated_data.get("is_favorite", instance.is_favorite)
+        instance.save()
+        return instance
+
+
+class AnimeReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AnimeReviews
+        fields = "__all__"
+
+    def create(self, validated_data):
+        review = AnimeReviews.objects.create(**validated_data)
+        return review
+
+    def update(self, instance, validated_data):
+        instance.user = validated_data.get("user", instance.user)
+        instance.anime = validated_data.get("anime", instance.anime)
+        instance.review = validated_data.get("review", instance.review)
+        instance.save()
+        return instance
