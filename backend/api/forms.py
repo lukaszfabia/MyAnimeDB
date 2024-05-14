@@ -1,21 +1,22 @@
+from typing import Any
 from django import forms
-from .models import Anime, UsersAnime
+from .models import Anime, Genre, UsersAnime
 
 
 class AnimeForm(forms.ModelForm):
-    """add anime info"""
+    genres = forms.ModelMultipleChoiceField(
+        queryset=Genre.objects.all(), widget=forms.CheckboxSelectMultiple, required=True
+    )
 
     class Meta:
         model = Anime
         fields = "__all__"
-        widgets = {
-            "id_anime": forms.HiddenInput(),
-            "type": forms.Select(choices=Anime.ANIME_TYPE),
-        }
 
-    def create(self, validated_data):
-        anime = Anime.objects.create(**validated_data)
-        return anime
+    # def save(self, commit=False) -> Any:
+    #     anime = super().save(commit=False)
+    #     anime.save()
+    #     self.save_m2m()
+    #     return anime
 
 
 class AnimeCollectionForm(forms.ModelForm):
@@ -52,3 +53,9 @@ class ReviewsForm(forms.ModelForm):
     def create(self, validated_data):
         review = UsersAnime.objects.create(**validated_data)
         return review
+
+
+class GenreForm(forms.ModelForm):
+    class Meta:
+        model = Genre  # Upewnij się, że model Genre istnieje
+        fields = ["name"]  # Zastąp 'name' polami, które chcesz uwzględnić w formularzu

@@ -1,6 +1,6 @@
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchData } from "../scripts";
 import Footer from "../components/Footer";
 import NoPage from "./NotFoundPage";
@@ -150,6 +150,8 @@ export default function Profile() {
 
   const { name } = useParams();
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetchData(`/api/user/${name}`)
       .then((data) => {
@@ -160,7 +162,7 @@ export default function Profile() {
       })
       .catch((error) => {
         console.error(error);
-        return <NoPage />;
+        navigate("/notfound");
       });
   });
 

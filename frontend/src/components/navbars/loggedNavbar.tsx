@@ -27,7 +27,7 @@ export default function LoggedNavbar({ username }: { username: string }) {
             <Dropdown.Item href="/profile/mylist">
               <FontAwesomeIcon icon={faList} /> my list
             </Dropdown.Item>
-            <Dropdown.Item href="/profile/settings">
+            <Dropdown.Item href="/settings">
               <FontAwesomeIcon icon={faCog} /> settings
             </Dropdown.Item>
             <Dropdown.Divider />

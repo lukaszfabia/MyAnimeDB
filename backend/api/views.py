@@ -15,6 +15,7 @@ from rest_framework.parsers import MultiPartParser, JSONParser
 
 
 from api.models import Anime, AnimeReviews, UserProfile, UsersAnime
+from api.stats import AnalyseData
 
 # from backend import settings
 
@@ -44,6 +45,7 @@ class GetRoutesView(generics.ListAPIView):
     """Main view to all routes in the API"""
 
     permission_classes = [AllowAny]
+    queryset = []
 
     def get(self, request):
         routes = [
@@ -201,7 +203,19 @@ class UserStats(generics.ListAPIView):
     """includes total time spent during watching, fav genre, watched episodes"""
 
     permission_classes = [AllowAny]
-    ...
+
+    def get(self, request, username):
+        # get users anime list
+        analysis = AnalyseData(username)
+        return Response(
+            {
+                "useranme": username,
+                "fav_genres": analysis.get_fav_genre(),
+                "total_time": analysis.get_total_time(),
+                "watched_episodes": analysis.get_watched_episodes(),
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class SearchAnime(generics.ListAPIView):
@@ -289,13 +303,17 @@ class Review(
 class FavoriteAnime(generics.ListAPIView):
     """Get all favorite animes for user"""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    queryset = UsersAnime.objects.all()
+    serializer_class = AnimeSerializer
 
-    def get(self, request, *args, **kwargs):
-        user = UserProfile.objects.get(user__username=request.user)
-        favorite_animes = UsersAnime.objects.filter(user=user, is_favorite=True)
-        serializer = UserAnimeSerializer(favorite_animes, many=True)
+    def get(self, request, username, **kwargs):
+        user = UserProfile.objects.get(user__username=username)
+        favorite_animes = self.queryset.filter(user=user, is_favorite=True)
+        anime = Anime.objects.filter(usersanime__in=favorite_animes)
+        serializer = self.serializer_class(anime, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class NoPage(generics.GenericAPIView):
     """No page if route does not exist"""

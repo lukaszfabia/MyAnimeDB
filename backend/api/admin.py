@@ -1,25 +1,40 @@
 from django.contrib import admin
+from .models import AnimeGenres, AnimeReviews, Genre, UserProfile, Anime, UsersAnime
+from .forms import AnimeCollectionForm, AnimeForm, GenreForm, ReviewsForm
 
 
-from .models import AnimeReviews, UserProfile, Anime, UsersAnime
-from django.contrib import admin
-from .forms import AnimeCollectionForm, AnimeForm, ReviewsForm
+# @admin.register(Anime)
+# class AnimeAdmin(admin.ModelAdmin):
+#     form = AnimeForm
+
+
+# @admin.register(UsersAnime)
+# class CollectionAdmin(admin.ModelAdmin):
+#     form = AnimeCollectionForm
+
+
+# @admin.register(AnimeReviews)
+# class ReviewsAdmin(admin.ModelAdmin):
+#     form = ReviewsForm
 
 
 @admin.register(Anime)
 class AnimeAdmin(admin.ModelAdmin):
     form = AnimeForm
+    list_display = ("title", "type", "score", "status")
 
 
 @admin.register(UsersAnime)
 class CollectionAdmin(admin.ModelAdmin):
-    """to development purposes only"""
-
     form = AnimeCollectionForm
 
 
 @admin.register(AnimeReviews)
 class ReviewsAdmin(admin.ModelAdmin):
-    """to development purposes only"""
-
     form = ReviewsForm
+
+
+@admin.register(Genre)
+class GenreAdmin(admin.ModelAdmin):
+    form = GenreForm
+    list_display = ("name",)

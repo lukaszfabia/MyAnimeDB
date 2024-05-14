@@ -11,6 +11,7 @@ import Anime from "./pages/Anime";
 import { AuthProvider } from "./components/context/AuthContext";
 import Footer from "./components/Footer";
 import SearchAnime from "./pages/SearchAnime";
+import Settings from "./pages/Settings";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,14 @@ const router = createBrowserRouter([
       <AuthProvider>
         <CustomNavbar />
         <Profile />
+      </AuthProvider>
+    ),
+  }, {
+    path: "/settings",
+    element: (
+      <AuthProvider>
+        <CustomNavbar />
+        <Settings />
       </AuthProvider>
     ),
   },

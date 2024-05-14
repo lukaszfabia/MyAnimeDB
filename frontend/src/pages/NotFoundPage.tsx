@@ -1,5 +1,6 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 
 export default function NoPage() {
     return (

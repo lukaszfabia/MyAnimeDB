@@ -97,6 +97,9 @@ class Anime(models.Model):
     status = models.CharField(max_length=30, choices=ANIME_STATUS)
     description = models.TextField()
     img_url = models.URLField()
+    duration = models.FloatField(null=True)
+    episodes = models.IntegerField(null=True)
+    genres = models.ManyToManyField(Genre, through="AnimeGenres")
 
     def __str__(self):
         return self.title
@@ -108,7 +111,7 @@ class AnimeGenres(models.Model):
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.anime} is {self.genre}"
+        return f"{self.genre}"
 
 
 class UsersAnime(models.Model):
@@ -137,6 +140,9 @@ class UsersAnime(models.Model):
     state = models.CharField(max_length=20, choices=ANIME_STATE)
     score = models.CharField(max_length=20, choices=SCORE_CHOICES)
     is_favorite = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user} is {self.state} {self.id_anime}"
 
 
 class AnimeReviews(models.Model):

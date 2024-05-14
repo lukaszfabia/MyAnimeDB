@@ -38,6 +38,7 @@ class MapOfAServer(ListAPIView):
     """General view of the server"""
 
     permission_classes = [AllowAny]
+    queryset = []
 
     def get(self, request):
         endpoints = [
