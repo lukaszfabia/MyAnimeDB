@@ -21,3 +21,10 @@ API:
 - mozna dodac jakas strone powitalna w html css, dla community
 - dodac userowi możliwosc dodawanai linków do sociali fb, twitter, spoti
  
+
+
+todo:
+- obliczac srednia ocen anime i ustawiac popularnosc na podstawie tego ile 
+osób ma dane anime w kolekcji. 
+
+- dodac endpoint który bedzie zmieniał stan danego anime w kolekcji usera 

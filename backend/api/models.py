@@ -116,11 +116,11 @@ class AnimeGenres(models.Model):
 
 class UsersAnime(models.Model):
     ANIME_STATE = [
-        ("Watching", "Watching"),
-        ("Completed", "Completed"),
-        ("On-Hold", "On-Hold"),
-        ("Dropped", "Dropped"),
-        ("Plan to Watch", "Plan to Watch"),
+        ("watching", "Watching"),
+        ("completed", "Completed"),
+        ("on-hold", "On-Hold"),
+        ("dropped", "Dropped"),
+        ("plan-to-watch", "Plan to Watch"),
     ]
 
     SCORE_CHOICES = [

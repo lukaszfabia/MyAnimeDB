@@ -8,10 +8,10 @@ import CustomNavbar from "./pages/Navigation";
 import Profile from "./pages/Profile";
 import Logout from "./pages/Logout";
 import Anime from "./pages/Anime";
-import { AuthProvider } from "./components/context/AuthContext";
-import Footer from "./components/Footer";
 import SearchAnime from "./pages/SearchAnime";
 import Settings from "./pages/Settings";
+import PrivateRoute from "./components/context/PrivateRoute";
+import ProtectedRoute from "./components/context/PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -27,36 +27,36 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: (
-      <AuthProvider>
+      <>
         <CustomNavbar />
         <LoginForm />
-      </AuthProvider>
+      </>
     ),
   },
   {
     path: "/register",
     element: (
-      <AuthProvider>
+      <>
         <CustomNavbar />
         <RegisterForm />
-      </AuthProvider>
+      </>
     ),
   },
   {
     path: "/profile/:name",
     element: (
-      <AuthProvider>
+      <PrivateRoute>
         <CustomNavbar />
         <Profile />
-      </AuthProvider>
+      </PrivateRoute>
     ),
   }, {
     path: "/settings",
     element: (
-      <AuthProvider>
+      <ProtectedRoute>
         <CustomNavbar />
         <Settings />
-      </AuthProvider>
+      </ProtectedRoute>
     ),
   },
   {

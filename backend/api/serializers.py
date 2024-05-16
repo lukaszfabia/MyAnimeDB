@@ -25,9 +25,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ["user", "avatar", "bio"]
 
     def is_valid_avatar(self, value: Optional[str]) -> bool:
-        return value != "" and value != "undefined" and value is not None
+        return value != "" and value is not None
 
     def create(self, validated_data):
+        print("jestem ")
         user_data = validated_data.pop("user")
         user = UserSerializer().create(user_data)
         if self.is_valid_avatar(validated_data.get("avatar")):
@@ -59,6 +60,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class AnimeSerializer(serializers.ModelSerializer):
+    genres = serializers.StringRelatedField(many=True)
+
     class Meta:
         model = Anime
         fields = "__all__"

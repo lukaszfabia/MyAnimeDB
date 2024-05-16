@@ -1,10 +1,11 @@
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { fetchData } from "../scripts";
 import Footer from "../components/Footer";
 import NoPage from "./NotFoundPage";
 import "./favanime.css";
+import api from "../scripts/api";
 
 const ProfileData = ({
   username,
@@ -70,6 +71,26 @@ const ProfileData = ({
 };
 
 const Stats = () => {
+  const { name } = useParams<{ name: string }>();
+  const [response, setResponse] = useState<any[]>([]);
+  const [totalTime, setTotalTime] = useState<string>("");
+  const [watchedEpisodes, setWatchedEpisodes] = useState<string>("");
+  const [favGenres, setFavGenres] = useState<string>("");
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await fetchData(`/api/user/stats/${name}`);
+        setTotalTime(data.total_time + " minutes");
+        setWatchedEpisodes(data.watched_episodes);
+        setFavGenres(data.fav_genres.join(", "));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStats();
+  }, [name]);
   return (
     <>
       <Container
@@ -81,10 +102,10 @@ const Stats = () => {
       >
         <h1 className="display-4">Statistics</h1>
         <Row>
-          <HeadingForStats name="Favourite genre" text="/genre/" />
-          <HeadingForStats name="Total time" text="/time/" />
+          <HeadingForStats name="Favourite genres" text={favGenres} />
+          <HeadingForStats name="Total time" text={totalTime} />
           <span></span>
-          <HeadingForStats name="Watched episodes" text="/episodes/" />
+          <HeadingForStats name="Watched episodes" text={watchedEpisodes} />
         </Row>
         <Row>
           <hr />
@@ -105,38 +126,52 @@ const HeadingForStats = ({ name, text }: { name: string; text: string }) => {
   );
 };
 
-const AnimeTitle = ({ title, imgUrl }: { title: string; imgUrl: string }) => {
+const AnimeTitle = ({ id, title, imgUrl }: { id: string, title: string; imgUrl: string }) => {
   return (
     <Col lg={4} className="mb-3">
-      <Card className="bg-dark text-white">
-        <Card.Img src={imgUrl} alt={title} className="img-fulid" />
-        <Card.ImgOverlay>
-          <div className="overlay show">
-            <Card.Title className="text-center">{title}</Card.Title>
-          </div>
-        </Card.ImgOverlay>
-      </Card>
-    </Col>
+      <Link to={`/anime/${id}`}>
+        <Card className="bg-dark text-white">
+          <Card.Img src={imgUrl} alt={title} className="img-fulid" />
+          <Card.ImgOverlay>
+            <div className="overlay show">
+              <Card.Title className="text-center">{title}</Card.Title>
+            </div>
+          </Card.ImgOverlay>
+        </Card>
+      </Link>
+    </Col >
   );
 };
 
 const FavAnime = () => {
+  const { name } = useParams<{ name: string }>();
+  const [response, setResponse] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchFavouriteAnime = async () => {
+      try {
+        const data = await fetchData(`/api/user/fav-anime/${name}`);
+        setResponse(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchFavouriteAnime();
+  }, [name]);
+
   return (
     <Container>
       <h1 className="display-4">Favourite Anime</h1>
       <Row>
-        <AnimeTitle
-          title="Fullmetal Alchemist: Brotherhood"
-          imgUrl="https://upload.wikimedia.org/wikipedia/en/thumb/7/7e/Fullmetal_Alchemist_Brotherhood_key_visual.png/220px-Fullmetal_Alchemist_Brotherhood_key_visual.png"
-        ></AnimeTitle>
-        <AnimeTitle
-          title="Ano Hi Mita Hana no Namae wo Bokutachi wa Mada Shiranai."
-          imgUrl="https://cdn.myanimelist.net/images/anime/5/79697.jpg"
-        ></AnimeTitle>
-        <AnimeTitle
-          title="Oshi no ko"
-          imgUrl="https://cdn.myanimelist.net/images/anime/1812/134736.jpg"
-        ></AnimeTitle>
+        {response.map((anime) => (
+          <AnimeTitle
+            key={anime.id_anime}
+            id={anime.id_anime}
+            title={anime.title}
+            imgUrl={anime.img_url}
+          />
+        ))}
       </Row>
     </Container>
   );
@@ -174,7 +209,7 @@ export default function Profile() {
             <ProfileData
               username={username || ""}
               email={email || ""}
-              avatar={avatar || import.meta.env.VITE_DEFAULT_AVATAR}
+              avatar={avatar}
               bio={bio || ""}
             />
           </Col>

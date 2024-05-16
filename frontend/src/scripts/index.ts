@@ -13,6 +13,7 @@ export const fetchData = (route: string) =>
 
 export const validatePassword = (
   e: React.ChangeEvent<HTMLInputElement>,
+  blankPassword: boolean,
   setPasswordError: (error: string) => void,
   setPassword: (password: string) => void
 ) => {
@@ -21,7 +22,7 @@ export const validatePassword = (
     setPasswordError(
       "Password must be at least 8 characters long and contain at least one letter and one number"
     );
-    document.getElementById("submit")?.setAttribute("disabled", "true");
+    if (!blankPassword) { document.getElementById("submit")?.setAttribute("disabled", "true"); }
   } else {
     setPasswordError("");
     setPassword(potentialPassword);

@@ -62,7 +62,7 @@ export default function CustomNavbar() {
 }
 
 const chooseNavbar = () => {
-  if (localStorage.getItem("isLogged") || sessionStorage.getItem("isLogged")) {
+  if (localStorage.getItem(ACCESS_TOKEN) || sessionStorage.getItem(ACCESS_TOKEN)) {
     return (
       <LoggedNavbar
         username={

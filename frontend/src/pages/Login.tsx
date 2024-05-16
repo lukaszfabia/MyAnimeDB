@@ -1,13 +1,17 @@
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { useAuth } from "../components/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
+import { login } from "../scripts/axios";
 
 const LoginForm = () => {
-  const { login } = useAuth();
+  // const { login } = useAuth();
+  const navigate = useNavigate();
 
   const submit = (e: any) => {
     e.preventDefault();
     const isRememberMe = e.target.rememberMe.checked;
-    login(e, isRememberMe);
+    login(e, isRememberMe, navigate);
   };
 
   return (
