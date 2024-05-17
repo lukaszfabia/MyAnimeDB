@@ -30,7 +30,6 @@ class AnalyseData:
             ]
         )
 
-        print(total_time)
         return total_time
 
     def get_watched_episodes(self) -> int:

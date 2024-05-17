@@ -1,3 +1,5 @@
+from typing import List
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -168,15 +170,6 @@ class AddAnimeToUser(
             return Response(
                 {"error": "Anime does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
-        # except UserProfile.DoesNotExist:
-        #     return Response(
-        #         {"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND
-        #     )
-        # except UsersAnime.DoesNotExist:
-        #     return Response(
-        #         {"error": "User's anime does not exist"},
-        #         status=status.HTTP_404_NOT_FOUND,
-        #     )
 
         serializer = UserAnimeSerializer(users_anime)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -204,11 +197,10 @@ class AddAnimeToUser(
                 {"message": "Anime already added for user"}, status=status.HTTP_200_OK
             )
 
-    def update(self, request, *args, **kwargs):
+    def update(self, request, id, *args, **kwargs):
         try:
-            anime = Anime.objects.get(id_anime=request.data.get("id_anime"))
+            anime = Anime.objects.get(id_anime=id)
             profile = UserProfile.objects.get(user__username=request.user)
-            # print(profile)
             users_anime = UsersAnime.objects.get(user=profile, id_anime=anime)
         except:
             return Response({"error": "not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -216,10 +208,16 @@ class AddAnimeToUser(
         data = request.data.copy()
         data["user"] = profile.pk
         data["id_anime"] = anime.id_anime
+        print(data.get("is_favorite"))
+        if "is_favorite" in data:
+            users_anime.is_favorite = data["is_favorite"]
+            users_anime.save()
+
         serializer = UserAnimeSerializer(users_anime, data=data, partial=True)
-        # print(serializer)
+
         if serializer.is_valid():
             serializer.save()
+            print(serializer.data)
             return Response(
                 {"message": "Anime updated for user"}, status=status.HTTP_200_OK
             )
@@ -229,15 +227,14 @@ class AddAnimeToUser(
 class UsersAnimeList(generics.ListAPIView):
     """Get all animes for user"""
 
-    permission_classes = [AllowAny]
-    serializer_class = AnimeSerializer
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserAnimeSerializer
     queryset = Anime.objects.all()
 
-    def get(self, request, username):
-        user = UserProfile.objects.get(user__username=username)
-        users_anime = UsersAnime.objects.filter(user=user)
-        anime = Anime.objects.filter(usersanime__in=users_anime)
-        serializer = self.serializer_class(anime, many=True)
+    def get(self, request, *args, **kwargs):
+        user = UserProfile.objects.get(user__username=request.user)
+        users_anime = UsersAnime.objects.filter(user=user).select_related("id_anime")
+        serializer = self.serializer_class(users_anime, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -286,73 +283,65 @@ class SearchAnime(generics.ListAPIView):
     ...
 
 
-class Review(
-    generics.CreateAPIView,
-    generics.UpdateAPIView,
-    generics.ListAPIView,
-    generics.DestroyAPIView,
-):
+class Review(generics.CreateAPIView, generics.ListAPIView, generics.DestroyAPIView):
     """Add review to anime or update it if it already exists, get all reviews for anime"""
 
     permission_classes = [IsAuthenticated]
     serializer_class = AnimeReviewSerializer
 
-    def create(self, request, *args, **kwargs):
-        user = UserProfile.objects.get(user__username=request.user)
-        anime = Anime.objects.get(id_anime=kwargs["id"])
-
-        if AnimeReviews.objects.filter(user=user, anime=anime):
-            return Response(
-                {"error": "Review already exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        review = request.data.get("review")
-        serializer = AnimeReviewSerializer(
-            data={"user": user.id, "anime": anime.id_anime, "review": review},
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Review added"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def update(self, request, *args, **kwargs):
-        user = UserProfile.objects.get(user__username=request.user)
-        anime = Anime.objects.get(id_anime=kwargs["id"])
-
-        review = request.data.get("review")
+    def post(self, request, *args, **kwargs):
+        user_profile = UserProfile.objects.get(user=request.user)
+        anime_id = kwargs["id"]
         try:
-            instance = AnimeReviews.objects.get(user=user, anime=anime)
-        except:
-            return Response(
-                {"error": "Review does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        serializer = AnimeReviewSerializer(
-            instance, data={"review": review}, partial=True
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Review changed"}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def get(self, request, *args, **kwargs):
-        try:
-            anime = Anime.objects.get(id_anime=kwargs["id"])
-            reviews = AnimeReviews.objects.filter(anime=anime)
-            serializer = AnimeReviewSerializer(reviews, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
+            anime = Anime.objects.get(id_anime=anime_id)
+        except Anime.DoesNotExist:
             return Response(
                 {"error": "Anime does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
 
-    def destroy(self, request, *args, **kwargs):
-        user = UserProfile.objects.get(user__username=request.user)
-        anime = Anime.objects.get(id_anime=kwargs["id"])
+        review_text = request.data.get("review")
+        review, created = AnimeReviews.objects.get_or_create(
+            user=user_profile, anime=anime
+        )
+
+        serializer = self.serializer_class(
+            review, data={"review": review_text}, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            message = "Review added" if created else "Review updated"
+            return Response(
+                {"message": message},
+                status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, *args, **kwargs):
+        anime_id = kwargs["id"]
+        try:
+            anime = Anime.objects.get(id_anime=anime_id)
+        except Anime.DoesNotExist:
+            return Response(
+                {"error": "Anime does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        reviews = AnimeReviews.objects.filter(anime=anime)
+        serializer = self.serializer_class(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        user_profile = UserProfile.objects.get(user=request.user)
+        anime_id = kwargs["id"]
+        try:
+            anime = Anime.objects.get(id_anime=anime_id)
+        except Anime.DoesNotExist:
+            return Response(
+                {"error": "Anime does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         try:
-            review = AnimeReviews.objects.get(user=user, anime=anime)
-        except:
+            review = AnimeReviews.objects.get(user=user_profile, anime=anime)
+        except AnimeReviews.DoesNotExist:
             return Response(
                 {"error": "Review does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -374,6 +363,23 @@ class FavoriteAnime(generics.ListAPIView):
         anime = Anime.objects.filter(usersanime__in=favorite_animes)
         serializer = self.serializer_class(anime, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IsFavoriteAnime(generics.RetrieveAPIView):
+
+    permission_classes = [IsAuthenticated]
+    queryset = UsersAnime.objects.all()
+    serializer_class = AnimeSerializer
+
+    def get(self, request, id, *args, **kwargs):
+        user = UserProfile.objects.get(user__username=request.user)
+        anime = Anime.objects.get(id_anime=id)
+        favorite_anime = self.queryset.filter(
+            user=user, id_anime=anime, is_favorite=True
+        )
+        if favorite_anime:
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class NoPage(generics.GenericAPIView):

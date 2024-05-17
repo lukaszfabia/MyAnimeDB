@@ -1,8 +1,8 @@
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import Footer from "../components/Footer";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 
-export default function NoPage() {
+const NoPage: React.FC = () => {
     return (
         <Container className="py-5 mt-5">
             <Row className="text-center text-white">
@@ -14,3 +14,5 @@ export default function NoPage() {
         </Container>
     )
 }
+
+export default NoPage;

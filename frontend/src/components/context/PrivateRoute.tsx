@@ -1,4 +1,3 @@
-import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../../scripts/api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../../constants/const";
@@ -74,23 +73,3 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, error }) => {
 };
 
 export default ProtectedRoute;
-
-// export const HiddenElements: React.FC<ProtectedRouteProps> = ({ children }) => {
-//   const [isAuth, setIsAuth] = useState<boolean>(false);
-//   const [loading, setLoading] = useState<boolean>(true);
-
-//   useEffect(() => {
-//     const checkAuth = async () => {
-//       const result = await auth();
-//       setIsAuth(result);
-//       setLoading(false);
-//     };
-//     checkAuth();
-//   }, []);
-
-//   if (loading) {
-//     return <div>Loading...</div>;
-//   }
-
-//   return isAuth ? children : null;
-// };

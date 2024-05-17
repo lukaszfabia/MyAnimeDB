@@ -1,11 +1,9 @@
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import { useAuth } from "../components/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 import { login } from "../scripts/axios";
 
-const LoginForm = () => {
-  // const { login } = useAuth();
+const LoginForm: React.FC = () => {
   const navigate = useNavigate();
 
   const submit = (e: any) => {

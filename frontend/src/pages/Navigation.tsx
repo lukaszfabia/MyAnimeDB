@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
-import { Navbar, Container, Nav, Button, FormControl } from "react-bootstrap";
+import { useState } from "react";
+import { Navbar, Container, Nav, FormControl } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { Form, Link, useParams, useSubmit } from "react-router-dom";
+import { Form, Link } from "react-router-dom";
 import "./navbar.css";
 import LoggedNavbar from "../components/navbars/loggedNavbar";
 import NotLoggedNavbar from "../components/navbars/notloggedNavbar";
-import { ACCESS_TOKEN } from "../constants/const";
-import api from "../scripts/api";
 import ProtectedRoute from "../components/context/PrivateRoute";
 
 export default function CustomNavbar() {
@@ -69,22 +67,3 @@ export default function CustomNavbar() {
     </header>
   );
 }
-
-const chooseNavbar = () => {
-  if (
-    localStorage.getItem(ACCESS_TOKEN) ||
-    sessionStorage.getItem(ACCESS_TOKEN)
-  ) {
-    return (
-      <LoggedNavbar
-        username={
-          localStorage.getItem("username") ||
-          sessionStorage.getItem("username") ||
-          ""
-        }
-      />
-    );
-  } else {
-    return <NotLoggedNavbar />;
-  }
-};

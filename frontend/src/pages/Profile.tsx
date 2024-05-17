@@ -3,21 +3,18 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { fetchData } from "../scripts";
 import Footer from "../components/Footer";
-import NoPage from "./NotFoundPage";
 import "./favanime.css";
-import api from "../scripts/api";
+import ProtectedRoute from "../components/context/PrivateRoute";
+import NoPage from "./NotFoundPage";
 
-const ProfileData = ({
-  username,
-  email,
-  avatar,
-  bio,
-}: {
+interface ProfileDataProps {
   username: string;
   email: string;
   avatar?: string;
   bio: string;
-}) => {
+}
+
+const ProfileData: React.FC<ProfileDataProps> = ({ username, email, avatar, bio }) => {
   return (
     <Container
       className="p-5"
@@ -48,31 +45,40 @@ const ProfileData = ({
         <p>{email}</p>
       </Row>
       <hr />
-      <Row className="py-4">
-        <Col
-          xs={6}
-          className="d-flex justify-content-center align-items-center"
-        >
-          <Button variant="outline-light" href="/profile/myanime">
-            My anime
-          </Button>
-        </Col>
-        <Col
-          xs={6}
-          className="d-flex justify-content-center align-items-center"
-        >
-          <Button variant="outline-light" href="/profile/mangalist">
-            My manga
-          </Button>
-        </Col>
-      </Row>
+      <ProtectedRoute error={<NoPage />}>
+        <Row className="py-4">
+          <Col
+            xs={6}
+            className="d-flex justify-content-center align-items-center"
+          >
+            <Link to={`/profile/${username}/myanime`}>
+              <Button variant="outline-success">
+                My anime
+              </Button>
+            </Link>
+          </Col>
+          <Col
+            xs={6}
+            className="d-flex justify-content-center align-items-center"
+          >
+            <Button variant="outline-primary">
+              My manga
+            </Button>
+          </Col>
+        </Row>
+      </ProtectedRoute>
     </Container>
   );
 };
 
-const Stats = () => {
+interface StatsData {
+  total_time: string;
+  watched_episodes: string;
+  fav_genres: string[];
+}
+
+const Stats: React.FC = () => {
   const { name } = useParams<{ name: string }>();
-  const [response, setResponse] = useState<any[]>([]);
   const [totalTime, setTotalTime] = useState<string>("");
   const [watchedEpisodes, setWatchedEpisodes] = useState<string>("");
   const [favGenres, setFavGenres] = useState<string>("");
@@ -80,7 +86,7 @@ const Stats = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const data = await fetchData(`/api/user/stats/${name}`);
+        const data: StatsData = await fetchData(`/api/user/stats/${name}`);
         setTotalTime(data.total_time + " minutes");
         setWatchedEpisodes(data.watched_episodes);
         setFavGenres(data.fav_genres.join(", "));
@@ -91,32 +97,36 @@ const Stats = () => {
 
     fetchStats();
   }, [name]);
+
   return (
-    <>
-      <Container
-        className="p-5"
-        style={{
-          backgroundColor: "rgba(255,255,255, 0.1)",
-          borderRadius: "50px",
-        }}
-      >
-        <h1 className="display-4">Statistics</h1>
-        <Row>
-          <HeadingForStats name="Favourite genres" text={favGenres} />
-          <HeadingForStats name="Total time" text={totalTime} />
-          <span></span>
-          <HeadingForStats name="Watched episodes" text={watchedEpisodes} />
-        </Row>
-        <Row>
-          <hr />
-          <FavAnime />
-        </Row>
-      </Container>
-    </>
+    <Container
+      className="p-5"
+      style={{
+        backgroundColor: "rgba(255,255,255, 0.1)",
+        borderRadius: "50px",
+      }}
+    >
+      <h1 className="display-4">Statistics</h1>
+      <Row>
+        <HeadingForStats name="Favourite genres" text={favGenres} />
+        <HeadingForStats name="Total time" text={totalTime} />
+        <span></span>
+        <HeadingForStats name="Watched episodes" text={watchedEpisodes} />
+      </Row>
+      <Row>
+        <hr />
+        <FavAnime />
+      </Row>
+    </Container>
   );
 };
 
-const HeadingForStats = ({ name, text }: { name: string; text: string }) => {
+interface HeadingForStatsProps {
+  name: string;
+  text: string;
+}
+
+const HeadingForStats: React.FC<HeadingForStatsProps> = ({ name, text }) => {
   return (
     <Col>
       <h3>
@@ -126,20 +136,13 @@ const HeadingForStats = ({ name, text }: { name: string; text: string }) => {
   );
 };
 
-const AnimeTitle = ({
-  id,
-  title,
-  imgUrl,
-}: {
-  id: string;
-  title: string;
-  imgUrl: string;
-}) => {
+
+const AnimeTitle: React.FC<any> = ({ id, title, imgUrl }) => {
   return (
     <Col lg={4} className="mb-3">
       <Link to={`/anime/${id}`}>
         <Card className="bg-dark text-white">
-          <Card.Img src={imgUrl} alt={title} className="img-fulid" />
+          <Card.Img src={imgUrl} alt={title} className="img-fluid" />
           <Card.ImgOverlay>
             <div className="overlay show">
               <Card.Title className="text-center">{title}</Card.Title>
@@ -151,7 +154,7 @@ const AnimeTitle = ({
   );
 };
 
-const FavAnime = () => {
+const FavAnime: React.FC = () => {
   const { name } = useParams<{ name: string }>();
   const [response, setResponse] = useState<any[]>([]);
 
@@ -185,14 +188,13 @@ const FavAnime = () => {
   );
 };
 
-export default function Profile() {
-  const [username, setUsername] = useState("");
+const Profile: React.FC = () => {
+  const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [bio, setBio] = useState<string>("");
 
-  const { name } = useParams();
-
+  const { name } = useParams<{ name: string }>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -207,7 +209,7 @@ export default function Profile() {
         console.error(error);
         navigate("/notfound");
       });
-  });
+  }, [name, navigate]);
 
   return (
     <>
@@ -215,10 +217,10 @@ export default function Profile() {
         <Row className="d-flex justify-content-center align-items-center">
           <Col lg={4}>
             <ProfileData
-              username={username || ""}
-              email={email || ""}
+              username={username}
+              email={email}
               avatar={avatar}
-              bio={bio || ""}
+              bio={bio}
             />
           </Col>
           <Col lg={8}>
@@ -229,4 +231,6 @@ export default function Profile() {
       </Container>
     </>
   );
-}
+};
+
+export default Profile;

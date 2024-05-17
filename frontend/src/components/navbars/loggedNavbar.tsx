@@ -7,6 +7,7 @@ import {
 import {
   faCog,
   faList,
+  faNewspaper,
   faSignOut,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -24,10 +25,13 @@ export default function LoggedNavbar({ username }: { username: string }) {
             <Dropdown.Item href={`/profile/${username}`}>
               <FontAwesomeIcon icon={faUser} /> profile
             </Dropdown.Item>
-            <Dropdown.Item href="/profile/mylist">
+            <Dropdown.Item href={`/profile/${username}/myanime`}>
               <FontAwesomeIcon icon={faList} /> my list
             </Dropdown.Item>
-            <Dropdown.Item href="/settings">
+            <Dropdown.Item href={`/profile/${username}/reviews`}>
+              <FontAwesomeIcon icon={faNewspaper} /> my reviews
+            </Dropdown.Item>
+            <Dropdown.Item href={`/profile/${username}/settings`}>
               <FontAwesomeIcon icon={faCog} /> settings
             </Dropdown.Item>
             <Dropdown.Divider />

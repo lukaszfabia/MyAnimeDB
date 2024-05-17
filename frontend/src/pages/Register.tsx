@@ -1,4 +1,4 @@
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Form } from "react-bootstrap";
 import { useState } from "react";
 import { validatePassword } from "../scripts";
 // import { useAuth } from "../components/context/AuthContext";
@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { UserForm } from "../components/NewDataForm";
 
 
-const RegisterForm = () => {
+const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
   const [password, setPassword] = useState<string>("");
 

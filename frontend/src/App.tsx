@@ -6,7 +6,7 @@ import {
 import "./App.css";
 import Home from "../src/pages/Home";
 import LoginForm from "./pages/Login";
-import RegisterForm from "./pages/register";
+import RegisterForm from "./pages/Register";
 import NoPage from "./pages/NotFoundPage";
 import CustomNavbar from "./pages/Navigation";
 import Profile from "./pages/Profile";
@@ -14,8 +14,9 @@ import Logout from "./pages/Logout";
 import Anime from "./pages/Anime";
 import SearchAnime from "./pages/SearchAnime";
 import Settings from "./pages/Settings";
-import PrivateRoute from "./components/context/PrivateRoute";
 import ProtectedRoute from "./components/context/PrivateRoute";
+import Footer from "./components/Footer";
+import MyList from "./pages/MyList";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
       <>
         <CustomNavbar />
         <LoginForm />
+        <Footer />
       </>
     ),
   },
@@ -43,20 +45,41 @@ const router = createBrowserRouter([
       <>
         <CustomNavbar />
         <RegisterForm />
+        <Footer />
       </>
     ),
   },
   {
     path: "/profile/:name",
     element: (
-      <PrivateRoute error={<Navigate to="/login" />}>
+      <ProtectedRoute error={<Navigate to="/login" />}>
         <CustomNavbar />
         <Profile />
-      </PrivateRoute>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: "/profile/:name/myanime",
+    element: (
+      <ProtectedRoute error={<Navigate to="/login" />}>
+        <CustomNavbar />
+        <MyList />
+        <Footer />
+      </ProtectedRoute>
     ),
   },
   {
-    path: "/settings",
+    path: "/profile/:name/reviews",
+    element: (
+      <ProtectedRoute error={<Navigate to="/login" />}>
+        <CustomNavbar />
+        <MyList />
+        <Footer />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/profile/:name/settings",
     element: (
       <ProtectedRoute error={<Navigate to="/login" />}>
         <CustomNavbar />
@@ -83,10 +106,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "*",
-    element: <NoPage />,
-  },
-  {
     path: "/logout",
     element: <Logout />,
   },
@@ -107,6 +126,13 @@ const router = createBrowserRouter([
         element: <h1>Search Manga</h1>,
       },
     ],
+  },
+  {
+    path: "*",
+    element: <>
+      <CustomNavbar />
+      <NoPage />
+    </>,
   },
 ]);
 

@@ -72,6 +72,8 @@ class AnimeSerializer(serializers.ModelSerializer):
 
 
 class UserAnimeSerializer(serializers.ModelSerializer):
+    id_anime = AnimeSerializer(read_only=True)
+
     class Meta:
         model = UsersAnime
         fields = "__all__"
@@ -85,14 +87,16 @@ class UserAnimeSerializer(serializers.ModelSerializer):
         instance.user = validated_data.get("user", instance.user)
         instance.state = validated_data.get("state", instance.state)
         # instance.score = validated_data.get("score", instance.score)
-        if "Plan to watch" not in validated_data.get("state"):
-            instance.score = validated_data.get("score", instance.score)
+        instance.score = validated_data.get("score", instance.score)
         instance.is_favorite = validated_data.get("is_favorite", instance.is_favorite)
         instance.save()
         return instance
 
 
 class AnimeReviewSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+    anime = serializers.StringRelatedField()
+
     class Meta:
         model = AnimeReviews
         fields = "__all__"

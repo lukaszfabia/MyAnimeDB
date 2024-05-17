@@ -1,6 +1,7 @@
+import React from "react";
 import { Container, Nav } from "react-bootstrap";
 
-const Footer = () => {
+const Footer: React.FC = () => {
   return (
     <Container>
       <footer className="py-3 my-4">

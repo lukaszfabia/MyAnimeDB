@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { updateProfile } from "../scripts/axios"
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Form } from "react-bootstrap";
 import { validatePassword } from "../scripts";
 import { useState } from "react";
 import { UserForm } from "../components/NewDataForm";
