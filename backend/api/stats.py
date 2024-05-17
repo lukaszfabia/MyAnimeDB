@@ -15,20 +15,23 @@ class AnalyseData:
         return (
             UsersAnime.objects.get(
                 id_anime=elem.id_anime, user__user__username=self.username
-            ).state
-            == "Completed"
+            ).state.lower()
+            == "completed"
             and elem.id_anime.episodes
             and elem.id_anime.duration
         )
 
     def get_total_time(self) -> int:
-        return sum(
+        total_time: int = sum(
             [
                 elem.id_anime.duration * elem.id_anime.episodes
                 for elem in self.animes
                 if self.is_watched(elem)
             ]
         )
+
+        print(total_time)
+        return total_time
 
     def get_watched_episodes(self) -> int:
         return sum(

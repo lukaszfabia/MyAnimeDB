@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import exceptions
 
 from api.serializers import (
     AnimeReviewSerializer,
@@ -142,13 +143,12 @@ class GetAnimeById(generics.RetrieveAPIView):
     def get(self, request, id):
         try:
             anime = Anime.objects.get(id_anime=id)
-        except Anime.DoesNotExist:
-            raise Response(
+            serializer = self.serializer_class(anime)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response(
                 {"error": "Anime does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
-
-        serializer = self.serializer_class(anime)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AddAnimeToUser(
@@ -164,19 +164,19 @@ class AddAnimeToUser(
             anime = Anime.objects.get(id_anime=kwargs["id"])
             profile = UserProfile.objects.get(user__username=request.user)
             users_anime = UsersAnime.objects.get(user=profile, id_anime=anime)
-        except Anime.DoesNotExist:
+        except:
             return Response(
                 {"error": "Anime does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
-        except UserProfile.DoesNotExist:
-            return Response(
-                {"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-        except UsersAnime.DoesNotExist:
-            return Response(
-                {"error": "User's anime does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        # except UserProfile.DoesNotExist:
+        #     return Response(
+        #         {"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND
+        #     )
+        # except UsersAnime.DoesNotExist:
+        #     return Response(
+        #         {"error": "User's anime does not exist"},
+        #         status=status.HTTP_404_NOT_FOUND,
+        #     )
 
         serializer = UserAnimeSerializer(users_anime)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -185,14 +185,8 @@ class AddAnimeToUser(
         try:
             anime = Anime.objects.get(id_anime=request.data.get("id_anime"))
             profile = UserProfile.objects.get(user__username=request.user)
-        except Anime.DoesNotExist:
-            return Response(
-                {"error": "Anime does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-        except UserProfile.DoesNotExist:
-            return Response(
-                {"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
+        except:
+            return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
 
         users_anime, created = UsersAnime.objects.get_or_create(
             user=profile, id_anime=anime
@@ -216,19 +210,8 @@ class AddAnimeToUser(
             profile = UserProfile.objects.get(user__username=request.user)
             # print(profile)
             users_anime = UsersAnime.objects.get(user=profile, id_anime=anime)
-        except Anime.DoesNotExist:
-            return Response(
-                {"error": "Anime does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-        except UserProfile.DoesNotExist:
-            return Response(
-                {"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-        except UsersAnime.DoesNotExist:
-            return Response(
-                {"error": "User's anime does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        except:
+            return Response({"error": "not found"}, status=status.HTTP_404_NOT_FOUND)
 
         data = request.data.copy()
         data["user"] = profile.pk
@@ -339,7 +322,7 @@ class Review(
         review = request.data.get("review")
         try:
             instance = AnimeReviews.objects.get(user=user, anime=anime)
-        except AnimeReviews.DoesNotExist:
+        except:
             return Response(
                 {"error": "Review does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -358,7 +341,7 @@ class Review(
             reviews = AnimeReviews.objects.filter(anime=anime)
             serializer = AnimeReviewSerializer(reviews, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Anime.DoesNotExist:
+        except:
             return Response(
                 {"error": "Anime does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -369,7 +352,7 @@ class Review(
 
         try:
             review = AnimeReviews.objects.get(user=user, anime=anime)
-        except AnimeReviews.DoesNotExist:
+        except:
             return Response(
                 {"error": "Review does not exist"}, status=status.HTTP_404_NOT_FOUND
             )

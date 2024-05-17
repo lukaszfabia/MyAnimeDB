@@ -8,6 +8,7 @@ import LoggedNavbar from "../components/navbars/loggedNavbar";
 import NotLoggedNavbar from "../components/navbars/notloggedNavbar";
 import { ACCESS_TOKEN } from "../constants/const";
 import api from "../scripts/api";
+import ProtectedRoute from "../components/context/PrivateRoute";
 
 export default function CustomNavbar() {
   const bg = {
@@ -52,7 +53,15 @@ export default function CustomNavbar() {
                   <FontAwesomeIcon icon={faSearch} />
                 </Nav.Link>
               </Form>
-              {chooseNavbar()}
+              <ProtectedRoute error={<NotLoggedNavbar />}>
+                <LoggedNavbar
+                  username={
+                    localStorage.getItem("username") ||
+                    sessionStorage.getItem("username") ||
+                    ""
+                  }
+                />
+              </ProtectedRoute>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -62,7 +71,10 @@ export default function CustomNavbar() {
 }
 
 const chooseNavbar = () => {
-  if (localStorage.getItem(ACCESS_TOKEN) || sessionStorage.getItem(ACCESS_TOKEN)) {
+  if (
+    localStorage.getItem(ACCESS_TOKEN) ||
+    sessionStorage.getItem(ACCESS_TOKEN)
+  ) {
     return (
       <LoggedNavbar
         username={

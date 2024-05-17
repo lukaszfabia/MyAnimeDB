@@ -126,7 +126,15 @@ const HeadingForStats = ({ name, text }: { name: string; text: string }) => {
   );
 };
 
-const AnimeTitle = ({ id, title, imgUrl }: { id: string, title: string; imgUrl: string }) => {
+const AnimeTitle = ({
+  id,
+  title,
+  imgUrl,
+}: {
+  id: string;
+  title: string;
+  imgUrl: string;
+}) => {
   return (
     <Col lg={4} className="mb-3">
       <Link to={`/anime/${id}`}>
@@ -139,7 +147,7 @@ const AnimeTitle = ({ id, title, imgUrl }: { id: string, title: string; imgUrl: 
           </Card.ImgOverlay>
         </Card>
       </Link>
-    </Col >
+    </Col>
   );
 };
 

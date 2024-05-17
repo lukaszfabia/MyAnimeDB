@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import "./App.css";
 import Home from "../src/pages/Home";
 import LoginForm from "./pages/Login";
@@ -45,15 +49,16 @@ const router = createBrowserRouter([
   {
     path: "/profile/:name",
     element: (
-      <PrivateRoute>
+      <PrivateRoute error={<Navigate to="/login" />}>
         <CustomNavbar />
         <Profile />
       </PrivateRoute>
     ),
-  }, {
+  },
+  {
     path: "/settings",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute error={<Navigate to="/login" />}>
         <CustomNavbar />
         <Settings />
       </ProtectedRoute>

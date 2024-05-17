@@ -124,6 +124,7 @@ class UsersAnime(models.Model):
     ]
 
     SCORE_CHOICES = [
+        ("0", "None"),
         ("1", "Bad"),
         ("2", "Boring"),
         ("3", "Ok"),

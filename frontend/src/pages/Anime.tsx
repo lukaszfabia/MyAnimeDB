@@ -2,17 +2,21 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import CustomNavbar from "./Navigation";
 import "./favanime.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faPlus, faHeart, faMinus, faCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faStar,
+  faPlus,
+  faHeart,
+  faMinus,
+  faCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import Footer from "../components/Footer";
 import { fetchData } from "../scripts";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { HiddenElements } from "../components/context/PrivateRoute";
+import ProtectedRoute from "../components/context/PrivateRoute";
 import api from "../scripts/api";
 
-const AnimeData = ({ anime }: {
-  anime: any
-}) => {
+const AnimeData = ({ anime }: { anime: any }) => {
   return (
     <Container
       className="p-5"
@@ -39,7 +43,7 @@ const AnimeData = ({ anime }: {
         </h2>
       </Row>
       <hr />
-      <HiddenElements>
+      <ProtectedRoute error={null}>
         <Row className="py-4">
           <Col
             xs={6}
@@ -63,7 +67,7 @@ const AnimeData = ({ anime }: {
             </Button>
           </Col>
         </Row>
-      </HiddenElements>
+      </ProtectedRoute>
     </Container>
   );
 };
@@ -103,9 +107,9 @@ const Stats = ({ anime }: { anime: any }) => {
       >
         <h1 className="display-4">Overview</h1>
         {/* only for logged users */}
-        <HiddenElements>
+        <ProtectedRoute error={null}>
           <RatingManage id={anime.id_anime} />
-        </HiddenElements>
+        </ProtectedRoute>
         <Info anime={anime} />
         <Synopsis desc={anime.description} />
       </Container>
@@ -123,40 +127,55 @@ const Synopsis = ({ desc }: { desc: string }) => {
 };
 
 const RatingManage = ({ id }: { id: string }) => {
-  const [status, setStatus] = useState('');
-  const [rating, setRating] = useState('');
+  const [status, setStatus] = useState("");
+  const [rating, setRating] = useState("");
   const [isOnUsersList, setisOnUsersList] = useState<any>(null);
 
   useEffect(() => {
-    api.get(`/api/user/has-anime/${id}`).then((response) => {
-      if (response.status === 200) {
-        setisOnUsersList(true);
-      } else {
+    api
+      .get(`/api/user/has-anime/${id}`)
+      .then((response) => {
+        if (response.status === 200) {
+          setisOnUsersList(true);
+        } else {
+          setisOnUsersList(false);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
         setisOnUsersList(false);
-      }
-    }).catch((error) => {
-      console.error(error);
-      setisOnUsersList(false);
-    });
+      });
   }, [id]);
 
   useEffect(() => {
     if (isOnUsersList) {
-      api.get(`/api/user/add-anime/${id}`).then((response) => {
-        if (response.status === 200) {
-          console.log(response.data)
-          setStatus(String(response.data.state).toLowerCase().replace(" ", "-"));
-          setRating(response.data.score);
-        }
-      }).catch((error) => {
-        console.error(error);
-      });
+      api
+        .get(`/api/user/add-anime/${id}`)
+        .then((response) => {
+          if (response.status === 200) {
+            console.log(response.data);
+            setStatus(
+              String(response.data.state).toLowerCase().replace(" ", "-")
+            );
+            setRating(response.data.score);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [id, isOnUsersList]);
 
   console.log(status, rating);
 
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log(event.target.value);
+    if (event.target.value === "plan-to-watch") {
+      document.getElementById("idRating")?.setAttribute("disabled", "true");
+      setRating("0");
+    } else {
+      document.getElementById("idRating")?.removeAttribute("disabled");
+    }
     setStatus(event.target.value);
   };
 
@@ -168,18 +187,24 @@ const RatingManage = ({ id }: { id: string }) => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    api.put(`/api/user/add-anime/${id}`, {
-      id_anime: id,
-      state: status,
-      score: rating,
-    }).then((response) => {
-      if (response.status === 200) {
-        setIsChangedState(true);
-      }
-    }).catch((error) => {
-      alert("Something went")
-      console.error(error);
-    });
+    if (status === "plan-to-watch") {
+      setRating("0");
+    }
+    api
+      .put(`/api/user/add-anime/${id}`, {
+        id_anime: id,
+        state: status,
+        score: rating,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          setIsChangedState(true);
+        }
+      })
+      .catch((error) => {
+        alert("Something went");
+        console.error(error);
+      });
   };
 
   return (
@@ -187,11 +212,16 @@ const RatingManage = ({ id }: { id: string }) => {
       <Row className="py-3">
         <Col lg={4} className="mb-2">
           <Button type="submit" variant="outline-light">
-            <FontAwesomeIcon icon={isChangedState ? faCheck : faPlus} /> {isOnUsersList ? "Update" : "Add"}
+            <FontAwesomeIcon icon={isChangedState ? faCheck : faPlus} />{" "}
+            {isOnUsersList ? "Update" : "Add"}
           </Button>
         </Col>
         <Col lg={4} className="mb-2">
-          <select className="form-select dark-select" value={status} onChange={handleStatusChange}>
+          <select
+            className="form-select dark-select"
+            value={status}
+            onChange={handleStatusChange}
+          >
             <option value="watching">Watching</option>
             <option value="completed">Completed</option>
             <option value="on-hold">On Hold</option>
@@ -200,7 +230,13 @@ const RatingManage = ({ id }: { id: string }) => {
           </select>
         </Col>
         <Col lg={4} className="mb-2">
-          <select className="form-select dark-select" value={rating} onChange={handleRatingChange}>
+          <select
+            className="form-select dark-select"
+            value={rating}
+            onChange={handleRatingChange}
+            id="idRating"
+          >
+            <option value="0">None</option>
             <option value="1">Bad (1)</option>
             <option value="2">Boring (2)</option>
             <option value="3">Ok (3)</option>
@@ -223,11 +259,14 @@ export default function Anime() {
   useEffect(() => {
     fetchData(`/api/animeid/${id}`)
       .then((data) => {
+        if (data.status === 404) {
+          navigate("/notfound");
+        }
         setAnime(data);
       })
       .catch((error) => {
-        console.error(error);
-        // navigate("/notfound");
+        console.log("blas");
+        navigate("/notfound");
       });
   }, [id]);
 
