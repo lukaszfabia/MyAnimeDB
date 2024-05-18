@@ -33,6 +33,8 @@ interface Review {
 const AnimeData: React.FC<{ anime: Anime }> = ({ anime }) => {
   const [isFav, setIsFav] = useState(false);
   const [isOnUsersList, setIsOnUsersList] = useState<boolean | null>(null);
+  const [communityScore, setCommunityScore] = useState<number>(0);
+  const [popularity, setPopularity] = useState<number>(0);
 
   useEffect(() => {
     api.get(`/api/user/is-fav-anime/${anime.id_anime}`)
@@ -44,6 +46,15 @@ const AnimeData: React.FC<{ anime: Anime }> = ({ anime }) => {
     api.get(`/api/user/has-anime/${anime.id_anime}`)
       .then(response => setIsOnUsersList(response.status === 200))
       .catch(() => setIsOnUsersList(false));
+  }, [anime.id_anime]);
+
+  useEffect(() => {
+    api.get(`/api/anime/score/${anime.id_anime}`)
+      .then(response => {
+        setCommunityScore(response.data.average_score)
+        setPopularity(response.data.popularity)
+      })
+      .catch(() => setCommunityScore(0));
   }, [anime.id_anime]);
 
   const handleAddFav = () => {
@@ -82,10 +93,17 @@ const AnimeData: React.FC<{ anime: Anime }> = ({ anime }) => {
       </Row>
       <hr />
       <Row>
-        <h2 className="text-center">
-          <strong>{anime.score}/6</strong>
-          <FontAwesomeIcon icon={faStar} style={{ color: "yellow" }} />
-        </h2>
+        <Col lg={6}>
+          <h2 className="text-center">
+            <strong id="idScore">{communityScore}/6</strong>
+            <FontAwesomeIcon icon={faStar} style={{ color: "yellow" }} />
+          </h2>
+        </Col>
+        <Col lg={6}>
+          <h2 className="text-center">
+            <p><span className="text-secondary">#</span>{popularity}</p>
+          </h2>
+        </Col>
       </Row>
       <hr />
       <ProtectedRoute error={null}>
@@ -132,7 +150,7 @@ const RatingManage: React.FC<{ id: string }> = ({ id }) => {
   const [status, setStatus] = useState<string>("");
   const [rating, setRating] = useState<string>("");
   const [isOnUsersList, setIsOnUsersList] = useState<boolean | null>(null);
-  const [isChangedState, setIsChangedState] = useState(false);
+  const [isChangedState, setIsChangedState] = useState<boolean>(false);
 
   useEffect(() => {
     api.get(`/api/user/has-anime/${id}`)
@@ -141,6 +159,7 @@ const RatingManage: React.FC<{ id: string }> = ({ id }) => {
   }, [id]);
 
   useEffect(() => {
+    console.log(isOnUsersList);
     if (isOnUsersList) {
       api.get(`/api/user/add-anime/${id}`)
         .then(response => {
@@ -157,20 +176,24 @@ const RatingManage: React.FC<{ id: string }> = ({ id }) => {
   const handleStatusChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
     setStatus(value);
+    setIsChangedState(false);
     if (value === "plan-to-watch") {
       setRating("0");
     }
   };
 
-  const handleRatingChange = (event: ChangeEvent<HTMLSelectElement>) => setRating(event.target.value);
+  const handleRatingChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setRating(event.target.value);
+    setIsChangedState(false);
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    api.put(`/api/user/add-anime/${id}`, { id_anime: id, state: status, score: rating })
+    const requestData = { state: status !== "" ? status : "watching", score: rating !== "" ? rating : "0" };
+    const creatOrUpdate = isOnUsersList ? api.put : api.post;
+    creatOrUpdate(`/api/user/add-anime/${id}`, requestData)
       .then(response => {
-        if (response.status === 200) {
-          setIsChangedState(true);
-        }
+        setIsChangedState(response.status === 200 || response.status === 201); // XDDDDDD
       })
       .catch(error => {
         alert("Something went wrong");
@@ -182,22 +205,23 @@ const RatingManage: React.FC<{ id: string }> = ({ id }) => {
     <form onSubmit={handleSubmit}>
       <Row className="py-3">
         <Col lg={4} className="mb-2">
-          <Button type="submit" variant="outline-light">
-            <FontAwesomeIcon icon={isChangedState ? faCheck : faPlus} /> {isOnUsersList ? "Update" : "Add"}
+          <Button type="submit" variant="outline-light" id="idAddOrUpadate">
+            {isChangedState ? <FontAwesomeIcon icon={faCheck} /> : <FontAwesomeIcon icon={faPlus} />}
+            {isOnUsersList ? " Update" : " Add"}
           </Button>
         </Col>
         <Col lg={4} className="mb-2">
-          <select className="form-select dark-select" value={status} onChange={handleStatusChange}>
+          <Form.Select className="dark-select" value={status} onChange={handleStatusChange}>
             <option value="watching">Watching</option>
             <option value="completed">Completed</option>
             <option value="on-hold">On Hold</option>
             <option value="dropped">Dropped</option>
             <option value="plan-to-watch">Plan to Watch</option>
-          </select>
+          </Form.Select>
         </Col>
         <Col lg={4} className="mb-2">
-          <select
-            className="form-select dark-select"
+          <Form.Select
+            className="dark-select"
             value={rating}
             onChange={handleRatingChange}
             id="idRating"
@@ -210,7 +234,7 @@ const RatingManage: React.FC<{ id: string }> = ({ id }) => {
             <option value="4">Very good (4)</option>
             <option value="5">Excellent (5)</option>
             <option value="6">Masterpiece (6)</option>
-          </select>
+          </Form.Select>
         </Col>
       </Row>
     </form>

@@ -1,30 +1,46 @@
-# React + TypeScript + Vite
+# Informacje co zawiera interfejs użytkownika
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+## Strona główna
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Strona główna zawiera content z API, czyli rzeczy takie jak: 
+- Najnowsze anime
+- Najlepsze anime
+- Rekomendacje 
 
-## Expanding the ESLint configuration
+## Formularze logowania i rejestracji
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Formularze logowania i rejestracji są dostępne dla użytkownika, który nie jest zalogowany.
 
-- Configure the top-level `parserOptions` property like this:
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+## Strona z anime
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Strona z anime zawiera content z API, czyli rzeczy takie jak:
+- Nazwa anime
+- Opis anime
+- Ocena anime - stworzona przez community
+- Popularność anime - stworzona przez community
+- Jakieś dane o bajce
+- Recenzje - stworzone przez community, dla zalogowanych użytkowników
+- Dodanie recenzji - dla zalogowanych użytkowników
+- Dodanie do ulubiony - dla zalogowanych użytkowników
+- Dodanie do swojej kolekcji z danym statusem oraz oceną - dla zalogowanych użytkowników
+
+
+## Strona z użytkownikiem
+
+Strona z użytkownikiem zawiera content z API, czyli rzeczy takie jak:
+- Nazwa użytkownika
+- Bio użytkownika
+- Avatar użytkownika
+- Ulubione anime użytkownika
+- Statystyki użytkownika: ulubione gatunki, czas spendzony, ilosc minut poświęconych na oglądanie anime.
+
+
+## Strona z ustawieniami
+
+User ma możliwość zmiany swojego avatara, bio, hasła, emaila, nazwy użytkownika. Ustawienie jest dostępne w navbarze, po kliknięciu na swoje imię.
+
+## Strona ze swoją kolekcją anime
+
+User ma możliwość przeglądania swojej kolekcji anime, filtrowania po statusie.

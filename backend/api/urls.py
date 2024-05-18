@@ -10,6 +10,7 @@ from .views import (
     IsOnUsersList,
     NoPage,
     RegistrationView,
+    StatsForAnime,
     UserDataView,
     SettingsView,
     Review,
@@ -44,5 +45,6 @@ urlpatterns = [
         IsOnUsersList.as_view(),
         name="check_is_on_list",
     ),
+    path("anime/score/<int:id>", StatsForAnime.as_view(), name="add_review"),
     re_path(r"^.*$", NoPage.as_view(), name="fail"),
 ]

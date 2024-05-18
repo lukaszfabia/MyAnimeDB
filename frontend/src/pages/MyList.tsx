@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../scripts/api";
-import { Card, Col, Container, Row } from "react-bootstrap";
+import { Form, Card, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 interface AnimeProps {
@@ -41,26 +41,45 @@ const ListAnime: React.FC = () => {
             setPersonalData(res.data);
         });
     }, []);
+    const [filter, setFilter] = useState<string>("all");
+
+    const handleFilterChange = (event: any) => {
+        setFilter(event.target.value);
+    };
 
     return (
         <Container className="text-white py-5 mt-5">
             <Row>
                 <h1 className="display-5">Anime list</h1>
-                {personalData.map((anime: any, index: number) => (
-                    <React.Fragment key={index}>
-                        <hr />
-                        <AnimeEntry
-                            id={anime.id_anime.id_anime}
-                            title={anime.id_anime.title}
-                            img_url={anime.id_anime.img_url}
-                            rating={anime.score}
-                            state={anime.state}
-                            episodes={anime.id_anime.episodes}
-                            type={anime.id_anime.type}
-                            genres={anime.id_anime.genres}
-                        />
-                    </React.Fragment>
-                ))}
+                <Col lg={4} className="mb-3">
+                    <Form.Select value={filter} onChange={handleFilterChange} className="bg-dark dark-select">
+                        <option value="all">All</option>
+                        <option value="watching">Watching</option>
+                        <option value="completed">Completed</option>
+                        <option value="on-hold">On hold</option>
+                        <option value="dropped">Dropped</option>
+                        <option value="plan-to-watch">Plan to watch</option>
+                    </Form.Select>
+                </Col>
+                {personalData
+                    .filter((anime: any) => {
+                        return filter == anime.state || filter == "all";
+                    })
+                    .map((anime: any, index: number) => (
+                        <React.Fragment key={index}>
+                            <hr />
+                            <AnimeEntry
+                                id={anime.id_anime.id_anime}
+                                title={anime.id_anime.title}
+                                img_url={anime.id_anime.img_url}
+                                rating={anime.score}
+                                state={anime.state}
+                                episodes={anime.id_anime.episodes}
+                                type={anime.id_anime.type}
+                                genres={anime.id_anime.genres}
+                            />
+                        </React.Fragment>
+                    ))}
             </Row>
         </Container>
     );

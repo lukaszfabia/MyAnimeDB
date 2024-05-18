@@ -83,6 +83,7 @@ class UserAnimeSerializer(serializers.ModelSerializer):
         return users_anime
 
     def update(self, instance, validated_data):
+        print(__name__ + " update")
         instance.id_anime = validated_data.get("id_anime", instance.id_anime)
         instance.user = validated_data.get("user", instance.user)
         instance.state = validated_data.get("state", instance.state)

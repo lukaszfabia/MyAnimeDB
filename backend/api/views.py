@@ -1,9 +1,7 @@
-from typing import List
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework import exceptions
 
 from api.serializers import (
     AnimeReviewSerializer,
@@ -18,7 +16,7 @@ from rest_framework.parsers import MultiPartParser, JSONParser
 
 
 from api.models import Anime, AnimeReviews, UserProfile, UsersAnime
-from api.stats import AnalyseData
+from api.stats import AnalyseAnime, AnalyseData
 
 # from backend import settings
 
@@ -176,7 +174,7 @@ class AddAnimeToUser(
 
     def create(self, request, *args, **kwargs):
         try:
-            anime = Anime.objects.get(id_anime=request.data.get("id_anime"))
+            anime = Anime.objects.get(id_anime=kwargs["id"])
             profile = UserProfile.objects.get(user__username=request.user)
         except:
             return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -184,8 +182,17 @@ class AddAnimeToUser(
         users_anime, created = UsersAnime.objects.get_or_create(
             user=profile, id_anime=anime
         )
+
         if created:
-            serializer = UserAnimeSerializer(users_anime, data=request.data)
+            print("created ?")
+            data = {
+                "user": profile.pk,
+                "id_anime": anime.id_anime,
+                "is_favorite": request.data.get("is_favorite") or False,
+                "state": request.data.get("state") or "watching",
+                "score": request.data.get("score") or 0,
+            }
+            serializer = UserAnimeSerializer(users_anime, data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(
@@ -194,12 +201,13 @@ class AddAnimeToUser(
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
-                {"message": "Anime already added for user"}, status=status.HTTP_200_OK
+                {"message": "Anime already exists for user"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def update(self, request, id, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         try:
-            anime = Anime.objects.get(id_anime=id)
+            anime = Anime.objects.get(id_anime=kwargs["id"])
             profile = UserProfile.objects.get(user__username=request.user)
             users_anime = UsersAnime.objects.get(user=profile, id_anime=anime)
         except:
@@ -380,6 +388,31 @@ class IsFavoriteAnime(generics.RetrieveAPIView):
         if favorite_anime:
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class StatsForAnime(generics.RetrieveAPIView):
+    """Compute average score for anime"""
+
+    permission_classes = [AllowAny]
+    queryset = UsersAnime.objects.all()
+
+    def get(self, request, id):
+        try:
+            anime = Anime.objects.get(id_anime=id)
+        except:
+            return Response(
+                {"error": "Anime does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        animes = self.queryset.filter(id_anime=anime)
+        return Response(
+            {
+                "title": anime.title,
+                "average_score": AnalyseAnime.compute_avg_rating(animes),
+                "popularity": AnalyseAnime.get_popularity(anime.title),
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class NoPage(generics.GenericAPIView):

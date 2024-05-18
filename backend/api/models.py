@@ -138,8 +138,8 @@ class UsersAnime(models.Model):
     )  # there should be anime not id anime
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
-    state = models.CharField(max_length=20, choices=ANIME_STATE)
-    score = models.CharField(max_length=20, choices=SCORE_CHOICES)
+    state = models.CharField(max_length=20, choices=ANIME_STATE, default="watching")
+    score = models.CharField(max_length=20, choices=SCORE_CHOICES, default="0")
     is_favorite = models.BooleanField(default=False)
 
     def __str__(self):

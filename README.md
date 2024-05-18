@@ -1,30 +1,39 @@
 # MyAnimeDB
 
-Wchodze na strone i mam:
-- home page z odpowiednim navbarem czy zalogowany
+**Ogólnie o projekcie**. 
+
+Projekt składa się z dwóch części:
+- Frontend `(React + TypeScript + Vite, Bootstrap 5)`
+- Backend `(DRF - Django rest framework)`
 
 
-Home page:
-- ładowanie losowych anime i inne pierdoly z bazy danych 
+Jak to działa? 
 
-Profil:
-- przy wejsciu na profil nalezy pobrac wszystkie pozycje usera oraz te ulubione
+Front wysyła żądania do backendu a backend wysyła odpowiedź, tyle i aż tyle.
 
+Jak odpalić?
 
-API: 
-- mozna dodac recencje userowi w jego kolekcji jako optional 
-- lepsze wyszukiwanie anime
-- do samego anime mozna dodac bohaterów głównych (ale to jest one way albo sie skupiam na api albo na tym i na tym)
-- studio mozna dodac ew do anime 
-- wyszukiwanie po jakis kluczach typu genre, type itp. (filtrowanie) 
-- zmiana ustawien usera przez api.
-- mozna dodac jakas strone powitalna w html css, dla community
-- dodac userowi możliwosc dodawanai linków do sociali fb, twitter, spoti
- 
+```bash
+cd
+git clone https://github.com/lukaszfabia/MyAnimeDB
+```
 
+## Backend
 
-todo:
-- obliczac srednia ocen anime i ustawiac popularnosc na podstawie tego ile 
-osób ma dane anime w kolekcji. 
+```bash
+cd MyAnimeDB/backend/
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver 
+```
 
-- dodac endpoint który bedzie zmieniał stan danego anime w kolekcji usera 
+## Frontend
+
+```bash
+cd MyAnimeDB/frontend/
+npm i
+npm run dev 
+```
