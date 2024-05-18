@@ -1,3 +1,5 @@
+[![Django CI](https://github.com/lukaszfabia/MyAnimeDB/actions/workflows/django.yml/badge.svg)](https://github.com/lukaszfabia/MyAnimeDB/actions/workflows/django.yml)
+
 # MyAnimeDB
 
 **Ogólnie o projekcie**. 
