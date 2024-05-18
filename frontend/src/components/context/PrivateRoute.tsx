@@ -2,6 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import api from "../../scripts/api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../../constants/const";
 import React, { useState, useEffect } from "react";
+import { Spinner } from "react-bootstrap";
 
 const refreshToken = async (): Promise<boolean> => {
   let refreshToken = localStorage.getItem(REFRESH_TOKEN);
@@ -66,7 +67,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, error }) => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" />;
   }
 
   return isAuth ? children : error;

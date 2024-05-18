@@ -15,6 +15,7 @@ interface ProfileDataProps {
 }
 
 const ProfileData: React.FC<ProfileDataProps> = ({ username, email, avatar, bio }) => {
+  const { name } = useParams<{ name: string }>();
   return (
     <Container
       className="p-5"
@@ -45,7 +46,7 @@ const ProfileData: React.FC<ProfileDataProps> = ({ username, email, avatar, bio 
         <p>{email}</p>
       </Row>
       <hr />
-      <ProtectedRoute error={<NoPage />}>
+      {name === localStorage.getItem("username") || name == sessionStorage.getItem("username") ? <ProtectedRoute error={<NoPage />}>
         <Row className="py-4">
           <Col
             xs={6}
@@ -66,7 +67,7 @@ const ProfileData: React.FC<ProfileDataProps> = ({ username, email, avatar, bio 
             </Button>
           </Col>
         </Row>
-      </ProtectedRoute>
+      </ProtectedRoute> : <></>}
     </Container>
   );
 };

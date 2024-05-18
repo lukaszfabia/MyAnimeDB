@@ -118,6 +118,7 @@ const router = createBrowserRouter([
           <>
             <CustomNavbar />
             <SearchAnime />
+            <Footer />
           </>
         ),
       },
