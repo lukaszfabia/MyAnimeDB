@@ -3,25 +3,10 @@ from .models import AnimeGenres, AnimeReviews, Genre, UserProfile, Anime, UsersA
 from .forms import AnimeCollectionForm, AnimeForm, GenreForm, ReviewsForm
 
 
-# @admin.register(Anime)
-# class AnimeAdmin(admin.ModelAdmin):
-#     form = AnimeForm
-
-
-# @admin.register(UsersAnime)
-# class CollectionAdmin(admin.ModelAdmin):
-#     form = AnimeCollectionForm
-
-
-# @admin.register(AnimeReviews)
-# class ReviewsAdmin(admin.ModelAdmin):
-#     form = ReviewsForm
-
-
 @admin.register(Anime)
 class AnimeAdmin(admin.ModelAdmin):
     form = AnimeForm
-    list_display = ("title", "type", "score", "status")
+    list_display = ("title", "type", "status")
 
 
 @admin.register(UsersAnime)

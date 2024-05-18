@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
     """represents a user profile
-    * user - the user that owns the profile
-    * avatar - the user's profile picture
-    * bio - the user's biography
+    * user - the user that owns the profile (User)
+    * avatar - the user's profile picture (ImageField)
+    * bio - the user's biography (str)
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
@@ -24,6 +24,10 @@ class UserProfile(models.Model):
 
 
 class Genre(models.Model):
+    """represents a genre of anime
+    * name - the name of the genre (str)
+    """
+
     GENRE = [
         ("Action", "Action"),
         ("Comedy", "Comedy"),
@@ -91,9 +95,6 @@ class Anime(models.Model):
     type = models.CharField(max_length=10, choices=ANIME_TYPE)
     title = models.CharField(max_length=100)
     alternative_title = models.CharField(max_length=200)
-    score = models.FloatField()
-    ranked = models.IntegerField()
-    popularity = models.IntegerField()
     status = models.CharField(max_length=30, choices=ANIME_STATUS)
     description = models.TextField()
     img_url = models.URLField()
@@ -115,6 +116,14 @@ class AnimeGenres(models.Model):
 
 
 class UsersAnime(models.Model):
+    """represents an anime in a user's list
+    * id_anime - the anime that the user has (Anime)
+    * user - the user that has the anime (UserProfile)
+    * state - the state of the anime in the user's list (str)
+    * score - the score that the user gave to the anime (str)
+    * is_favorite - whether the anime is a favorite of the user (bool)
+    """
+
     ANIME_STATE = [
         ("watching", "Watching"),
         ("completed", "Completed"),
@@ -147,6 +156,12 @@ class UsersAnime(models.Model):
 
 
 class AnimeReviews(models.Model):
+    """represents a review of an anime
+    * user - the user that wrote the review (UserProfile)
+    * anime - the anime that the review is about (Anime)
+    * review - the review itself (str)
+    """
+
     id_review = models.AutoField(primary_key=True)
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     anime = models.ForeignKey(Anime, on_delete=models.CASCADE)

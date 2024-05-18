@@ -1,5 +1,3 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -17,8 +15,6 @@ from rest_framework.parsers import MultiPartParser, JSONParser
 
 from api.models import Anime, AnimeReviews, UserProfile, UsersAnime
 from api.stats import AnalyseAnime, AnalyseData
-
-# from backend import settings
 
 
 class RegistrationView(generics.CreateAPIView):
@@ -47,26 +43,23 @@ class GetRoutesView(generics.ListAPIView):
     """Main view to all routes in the API"""
 
     permission_classes = [AllowAny]
-    queryset = []
+    queryset = [
+        {"route": "token/", "description": "Get JWT token"},
+        {"route": "token/refresh/", "description": "Refresh JWT token"},
+        {"route": "register/", "description": "Register a user"},
+        {
+            "route": "user/<str:username>",
+            "description": "Get a users info like username.",
+        },
+        {
+            "route": "anime/<str:title>",
+            "description": "Get an anime by title",
+        },
+        {"route": "settings/", "description": "Get or update user settings"},
+    ]
 
-    def get(self, request):
-        routes = [
-            {"route": "token/", "description": "Get JWT token"},
-            {"route": "token/refresh/", "description": "Refresh JWT token"},
-            {"route": "register/", "description": "Register a user"},
-            {
-                "route": "user/<str:username>",
-                "description": "Get a users info like username.",
-            },
-            {
-                "route": "anime/<str:title>",
-                "description": "Get an anime by title",
-            },
-            {"route": "user-data/", "description": "Get user data"},
-            {"route": "settings/", "description": "Get or update user settings"},
-        ]
-
-        return Response(routes)
+    def get(self, request, *args, **kwargs):
+        return Response(self.queryset, status=status.HTTP_200_OK)
 
 
 class UserDataView(generics.ListAPIView):
