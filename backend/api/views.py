@@ -1,5 +1,7 @@
+from typing import Dict, List, Set
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 
 from api.serializers import (
     AnimeReviewSerializer,
@@ -13,7 +15,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.parsers import MultiPartParser, JSONParser
 
 
-from api.models import Anime, AnimeReviews, UserProfile, UsersAnime
+from api.models import Anime, AnimeReviews, Genre, UserProfile, UsersAnime
 from api.stats import AnalyseAnime, AnalyseData
 
 
@@ -277,11 +279,74 @@ class UserStats(generics.ListAPIView):
         )
 
 
-class SearchAnime(generics.ListAPIView):
-    """searching anime with given kwargs"""
+class GetAllAnimeProps(generics.ListAPIView):
+    """Get all genres for anime"""
 
     permission_classes = [AllowAny]
-    ...
+    queryset = []
+
+    def get(self, request, *args, **kwargs):
+        result: List[Dict] = list()
+
+        genres = {
+            "genres": [
+                {"id": genre.id_genre, "name": genre.name}
+                for genre in Genre.objects.all()
+            ]
+        }
+
+        types = {
+            "types": [
+                {"id": id, "name": type[1]} for id, type in enumerate(Anime.ANIME_TYPE)
+            ]
+        }
+
+        status_of_anime = {
+            "status": [
+                {"id": id, "name": status[1]}
+                for id, status in enumerate(Anime.ANIME_STATUS)
+            ]
+        }
+
+        result.append(genres)
+        result.append(types)
+        result.append(status_of_anime)
+
+        return Response({"props": result}, status=status.HTTP_200_OK)
+
+
+class ComplexSearch(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = AnimeSerializer
+
+    def get_queryset(self):
+        return super().get_queryset()
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+
+class SearchAnime(generics.ListAPIView):
+    """searching anime with given kwargs for search bar"""
+
+    permission_classes = [AllowAny]
+    serializer_class = AnimeSerializer
+
+    def get_queryset(self):
+        keywords: str = self.kwargs.get("keywords", "")
+        keywords_list: List[str] = keywords.split("+")
+        query: List[Anime] = Anime.objects.all()
+        for keyword in keywords_list:
+            query = query.filter(
+                Q(title__icontains=keyword.lower())
+                | Q(alternative_title__icontains=keyword.lower())
+            )
+        return query
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class Review(generics.CreateAPIView, generics.ListAPIView, generics.DestroyAPIView):

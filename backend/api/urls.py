@@ -3,6 +3,7 @@ from .views import (
     AddAnimeToUser,
     AllAnime,
     FavoriteAnime,
+    GetAllAnimeProps,
     GetAnimeById,
     GetAnimeByTitle,
     GetRoutesView,
@@ -10,6 +11,7 @@ from .views import (
     IsOnUsersList,
     NoPage,
     RegistrationView,
+    SearchAnime,
     StatsForAnime,
     UserDataView,
     SettingsView,
@@ -46,5 +48,7 @@ urlpatterns = [
         name="check_is_on_list",
     ),
     path("anime/score/<int:id>", StatsForAnime.as_view(), name="add_review"),
+    path("search/anime/<str:keywords>", SearchAnime.as_view(), name="search"),
+    path("anime/props/", GetAllAnimeProps.as_view(), name="all_genres"),
     re_path(r"^.*$", NoPage.as_view(), name="fail"),
 ]
