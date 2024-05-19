@@ -18,11 +18,18 @@ export const validatePassword = (
   setPassword: (password: string) => void
 ) => {
   const potentialPassword = e.target.value;
-  if (!PASSWORD_REGEX.test(potentialPassword)) {
-    setPasswordError(
-      "Password must be at least 8 characters long and contain at least one letter and one number"
-    );
-    if (!blankPassword) { document.getElementById("submit")?.setAttribute("disabled", "true"); }
+  const isValidPassword = PASSWORD_REGEX.test(potentialPassword);
+
+  if (!isValidPassword) {
+    if (!blankPassword) {
+      document.getElementById("submit")?.removeAttribute("disabled");
+      setPasswordError("");
+    } else {
+      document.getElementById("submit")?.setAttribute("disabled", "true");
+      setPasswordError(
+        "Password must be at least 8 characters long and contain at least one letter and one number"
+      );
+    }
   } else {
     setPasswordError("");
     setPassword(potentialPassword);

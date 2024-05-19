@@ -1,29 +1,5 @@
-// import axios from "axios";
-
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants/const";
 import api from "./api";
-
-// let isRefeshed = false
-
-// axios.interceptors.response.use(resp => resp, async error => {
-//     if (error.response.status === 401 && !isRefeshed) {
-//         isRefeshed = !isRefeshed
-//         const response = await axios.post('http://localhost:8000/api/token/refresh/', {
-//             refresh: localStorage.getItem('refresh_token')
-//         }, { headers: { 'Content-Type': 'application/json' } });
-
-//         if (response.status === 200) {
-//             axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.access
-//             localStorage.setItem('access_token', response.data.access)
-//             localStorage.setItem('refresh_token', response.data.refresh)
-//             return axios(error.config)
-//         }
-//     }
-//     return error
-// });
-
 
 export const register = async (e: any, navigate: (path: string) => void) => {
     e.preventDefault();
@@ -49,7 +25,7 @@ export const register = async (e: any, navigate: (path: string) => void) => {
         })
         .catch((error) => {
             console.log(error);
-            alert("username already exists");
+            alert("username or email already exists");
             window.location.reload();
         });
 };
@@ -107,12 +83,6 @@ export const updateProfile = async (e: any, navigate: (path: string) => void) =>
         formData.append("avatar", e.target.avatar.files[0]);
     }
 
-    // const data = {
-    //     user: user,
-    //     avatar: e.target.avatar.files.length > 0 ? e.target.avatar.files[0] : undefined,
-    //     bio: bio !== "" ? bio : undefined,
-    // };
-
     await api
         .put("/api/user/settings/", formData, {
             headers: {
@@ -159,6 +129,5 @@ export const updateRating = async (e: any, animeId: number, navigate: (path: str
 }
 
 
-// export default { login, register };
 
 

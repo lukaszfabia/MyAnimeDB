@@ -8,18 +8,13 @@ class AnalyseAnime:
     def compute_avg_rating(animes: List[Anime]) -> float:
         if len(animes) == 0:
             return 0.0
+
+        non_zero_scores = sum(1 for anime in animes if float(anime.score) != 0)
+        if non_zero_scores == 0:
+            return 0.0
+
         return round(
-            sum(
-                [
-                    (
-                        float(anime.score)
-                        if anime.score.lower() not in ["none", "0"]
-                        else 0
-                    )
-                    for anime in animes
-                ]
-            )
-            / len(animes),
+            sum([(float(anime.score)) for anime in animes]) / non_zero_scores,
             2,
         )
 

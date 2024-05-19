@@ -1,48 +1,29 @@
 import { useNavigate } from "react-router-dom";
 import { updateProfile } from "../scripts/axios"
 import { Container, Row, Col, Form } from "react-bootstrap";
-import { validatePassword } from "../scripts";
-import { useState } from "react";
-import { UserForm } from "../components/NewDataForm";
+import UserForm from "../components/NewDataForm";
 
 export default function MySettings() {
-    const [password, setPassword] = useState<string>("");
-    const [passwordError, setPasswordError] = useState<string>("");
-
     const navigate = useNavigate();
     const sumbitHandler = (e: any) => {
         updateProfile(e, navigate)
     }
 
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        validatePassword(e, true, setPasswordError, setPassword);
-    };
-
     return (
-        <Container className="py-5 mt-5 text-white">
-            <Row>
-                <h1>Settings</h1>
-                <h3 className="text-secondary">Update your profile</h3>
-                <p className="text-warning">If you decide to change some info , you will be logged out.</p>
-            </Row>
-            <Row>
+        <Container className="mt-5 text-white py-5 rounded-5">
+            <Row className="justify-content-center">
                 <Col xs={10} sm={8} md={6}>
+                    <h1 className="text-center mb-4">Update your profile</h1>
+                    <h3 className="lead text-secondary text-center mb-5">If you decide to change some fields, you will be logged out!</h3>
                     <Form onSubmit={sumbitHandler}>
-                        <UserForm handlePasswordChange={handlePasswordChange} passwordError={passwordError} isRequired={false} text="update">
-                            <Form.Group controlId="formBasicBio" className="mb-4 py-2">
-                                <Form.Control
-                                    type="text"
-                                    name="bio"
-                                    placeholder="enter bio..."
-                                    required={false}
-                                    className="bg-dark text-white border-1 border-secondary"
-                                />
-                            </Form.Group>
+                        <UserForm
+                            isRequired={false}
+                            text="update"
+                            mode="update">
                         </UserForm>
                     </Form>
                 </Col>
             </Row>
-
-        </Container>
+        </Container >
     )
 }

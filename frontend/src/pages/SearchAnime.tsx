@@ -62,7 +62,15 @@ function ExampleAnime() {
   const [anime, setAnime] = useState<any[]>([]);
 
   useEffect(() => {
-    api.get("/api/anime/")
+    const keyword = new URLSearchParams(window.location.search).get("keyword")
+    const genres = new URLSearchParams(window.location.search).getAll("genre");
+    const status = new URLSearchParams(window.location.search).getAll("status");
+    const genreQuery = genres.map((genre) => `genre=${genre}`).join("&");
+    const statusQuery = status.map((status) => `status=${status}`).join("&");
+    const keywordQuery = keyword ? `keywords=${keyword}` : "";
+    const query = [genreQuery, statusQuery, keywordQuery].filter((query) => query.length > 0).join("&");
+
+    api.get(`/api/search/anime/${query !== "" ? query : "all"}`)
       .then((response) => {
         console.log(response.data);
         setAnime(response.data);
@@ -75,11 +83,6 @@ function ExampleAnime() {
 
   return (
     <Container className="text-white">
-      <Row className="py-5">
-        <h4 className="display-5">
-          Results for
-        </h4>
-      </Row>
       <HeaderAnime />
       {anime.map((anime: any, index: number) => (
         <React.Fragment key={anime.id_anime}>

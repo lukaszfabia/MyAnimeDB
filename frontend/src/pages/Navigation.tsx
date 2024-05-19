@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navbar, Container, Nav, FormControl } from "react-bootstrap";
+import { Navbar, Container, Nav, FormControl, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Form, Link } from "react-router-dom";
@@ -17,6 +17,12 @@ export default function CustomNavbar() {
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
   };
+
+  const handleSearch = (e: any) => {
+    e.preventDefault();
+    const keyword = e.target[0].value;
+    window.location.href = `/search/anime?keyword=${keyword}`;
+  }
 
   return (
     <header>
@@ -38,18 +44,18 @@ export default function CustomNavbar() {
           </Navbar.Toggle>
           <Navbar.Collapse id="basic-navbar-nav" className="text-center">
             <Nav className="ms-auto">
-              <Nav.Link href="/search/anime">Anime</Nav.Link>
-              <Nav.Link href="/search/manga">Manga</Nav.Link>
-              <Form className="d-flex">
+              <Nav.Link href="/search/anime" active={location.pathname === "/search/anime"}>Anime</Nav.Link>
+              <Nav.Link href="/search/manga" active={location.pathname === "/search/manga"}>Manga</Nav.Link>
+              <Form className="d-flex" onSubmit={handleSearch}>
                 <FormControl
                   type="search"
                   placeholder="Search..."
                   className="me-2 ms-4 bg-dark text-white border-secondary"
                   aria-label="Search"
                 />
-                <Nav.Link>
+                <Button type="submit" variant="no-bg" className="text-white">
                   <FontAwesomeIcon icon={faSearch} />
-                </Nav.Link>
+                </Button>
               </Form>
               <ProtectedRoute error={<NotLoggedNavbar />}>
                 <LoggedNavbar

@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict, List
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
@@ -17,6 +17,7 @@ from rest_framework.parsers import MultiPartParser, JSONParser
 
 from api.models import Anime, AnimeReviews, Genre, UserProfile, UsersAnime
 from api.stats import AnalyseAnime, AnalyseData
+from api.preprocess_query import Preprocess
 
 
 class RegistrationView(generics.CreateAPIView):
@@ -31,6 +32,12 @@ class RegistrationView(generics.CreateAPIView):
         serializer = self.serializer_class(data=request.data)
         print(request.data)
         if serializer.is_valid():
+            email = request.data.get("email")
+            if email is None or UserProfile.objects.filter(user__email=email).exists():
+                return Response(
+                    {"error": "User with this email already exists"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             serializer.save()
             return Response(
                 {
@@ -107,21 +114,17 @@ class SettingsView(generics.UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AllAnime(generics.ListAPIView):
+class SearchAnime(generics.ListAPIView):
     """Get all animes"""
 
-    # queryset = Anime.objects.all().order_by("title")
     serializer_class = AnimeSerializer
     permission_classes = [AllowAny]
 
-    def get_queryset(self):
-        queryset = Anime.objects.all().order_by("title")
-        for elem in queryset:
-            rating = AnalyseAnime.compute_avg_rating(
-                UsersAnime.objects.filter(id_anime=elem)
-            )
-            elem.rating = rating
-        return queryset
+    def get(self, request, *args, **kwargs):
+        preprocess_query = Preprocess(kwargs.get("keywords", "all"))
+        queryset = preprocess_query.get_result()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class GetAnimeByTitle(generics.ListAPIView):
@@ -319,40 +322,6 @@ class GetAllAnimeProps(generics.ListAPIView):
         result.append(status_of_anime)
 
         return Response({"props": result}, status=status.HTTP_200_OK)
-
-
-class ComplexSearch(generics.ListAPIView):
-    permission_classes = [AllowAny]
-    serializer_class = AnimeSerializer
-
-    def get_queryset(self):
-        return super().get_queryset()
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-
-class SearchAnime(generics.ListAPIView):
-    """searching anime with given kwargs for search bar"""
-
-    permission_classes = [AllowAny]
-    serializer_class = AnimeSerializer
-
-    def get_queryset(self):
-        keywords: str = self.kwargs.get("keywords", "")
-        keywords_list: List[str] = keywords.split("+")
-        query: List[Anime] = Anime.objects.all()
-        for keyword in keywords_list:
-            query = query.filter(
-                Q(title__icontains=keyword.lower())
-                | Q(alternative_title__icontains=keyword.lower())
-            )
-        return query
-
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class Review(generics.CreateAPIView, generics.ListAPIView, generics.DestroyAPIView):

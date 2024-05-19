@@ -1,7 +1,6 @@
 from django.urls import path, re_path
 from .views import (
     AddAnimeToUser,
-    AllAnime,
     FavoriteAnime,
     GetAllAnimeProps,
     GetAnimeById,
@@ -41,7 +40,7 @@ urlpatterns = [
     path("anime/<str:title>", GetAnimeByTitle.as_view(), name="anime_by_title"),
     path("animeid/<int:id>", GetAnimeById.as_view(), name="anime_by_id"),
     path("anime/reviews/<int:id>", Review.as_view(), name="add_review"),
-    path("anime/", AllAnime.as_view(), name="all_anime"),
+    # path("anime/<str:keywords>", AllAnime.as_view(), name="all_anime"),
     path(
         "user/has-anime/<int:id>",
         IsOnUsersList.as_view(),

@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="/anime" className="px-2 text-white">
+            <Nav.Link href="/search/anime" className="px-2 text-white">
               Anime
             </Nav.Link>
           </Nav.Item>

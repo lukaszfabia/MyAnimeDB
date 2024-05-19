@@ -17,6 +17,7 @@ import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/context/PrivateRoute";
 import Footer from "./components/Footer";
 import MyList from "./pages/MyList";
+import RestoringPassword from "./pages/RestoringPassword";
 
 const router = createBrowserRouter([
   {
@@ -84,6 +85,7 @@ const router = createBrowserRouter([
       <ProtectedRoute error={<Navigate to="/login" />}>
         <CustomNavbar />
         <Settings />
+        <Footer />
       </ProtectedRoute>
     ),
   },
@@ -127,6 +129,13 @@ const router = createBrowserRouter([
         element: <h1>Search Manga</h1>,
       },
     ],
+  }, {
+    path: "/login/forgot-password",
+    element: <>
+      <CustomNavbar />
+      <RestoringPassword />
+      <Footer />
+    </>,
   },
   {
     path: "*",
