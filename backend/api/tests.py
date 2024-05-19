@@ -1,7 +1,15 @@
 from django.test import TestCase
 from .models import *
 from rest_framework.test import APITestCase
-from .serializers import UserAnimeSerializer
+from .serializers import (
+    AnimeReviewSerializer,
+    AnimeSerializer,
+    UserAnimeSerializer,
+    UserProfileSerializer,
+    UserSerializer,
+)
+from django.contrib.auth.models import User
+from .serializers import UserSerializer
 
 # Create your tests here.
 
@@ -202,3 +210,178 @@ class TestUsersAnime(TestCase):
 ########################
 # Test Serializers
 ########################
+class TestUserSerializer(APITestCase):
+    def test_user_serializer(self):
+        user = User.objects.create(
+            username="testuser", password="testpassword", email="tomasz@gmail.com"
+        )
+
+        serializer = UserSerializer(user)
+
+        expected_username = f"{serializer.data['username']}"
+        expected_email = f"{serializer.data['email']}"
+        self.assertEqual(expected_username, "testuser")
+        self.assertEqual(expected_email, "tomasz@gmail.com")
+
+
+class TestUserProfileSerializer(APITestCase):
+    def test_user_profile_serializer(self):
+        user = User.objects.create(
+            username="testuser", password="testpassword", email="tomek@asd.pl"
+        )
+
+        profile = UserProfile.objects.create(
+            user=user, bio="test bio", avatar="def.png"
+        )
+
+        serializer = UserProfileSerializer(profile)
+
+        expected_bio = f"{serializer.data['bio']}"
+        expected_avatar = f"{serializer.data['avatar']}"
+        expected_username = f"{serializer.data['user']['username']}"
+        expected_email = f"{serializer.data['user']['email']}"
+        self.assertEqual(expected_bio, "test bio")
+        self.assertEqual(expected_avatar, "/media/def.png")
+        self.assertEqual(expected_username, "testuser")
+        self.assertEqual(expected_email, "tomek@asd.pl")
+
+
+class TestAnimeSerializer(APITestCase):
+    def test_anime_serializer(self):
+        genres = {
+            Genre.objects.create(name="Action"),
+            Genre.objects.create(name="Adventure"),
+            Genre.objects.create(name="Comedy"),
+        }
+
+        anime = Anime.objects.create(
+            title="ABCD",
+            type="TV",
+            episodes=12,
+            status="Not yet aired",
+            description="TEST DESCRIPTION",
+            duration=24,
+            img_url="https://placehold.jp/150x150.png",
+        )
+
+        anime.genres.set(genres)
+
+        serializer = AnimeSerializer(anime)
+
+        expected_title = f"{serializer.data['title']}"
+        expected_type = f"{serializer.data['type']}"
+        expected_episodes = f"{serializer.data['episodes']}"
+        expected_status = f"{serializer.data['status']}"
+        expected_description = f"{serializer.data['description']}"
+        expected_duration = f"{serializer.data['duration']}"
+        expected_img_url = f"{serializer.data['img_url']}"
+        expected_genres: set[str] = set(serializer.data["genres"])
+        self.assertEqual(expected_title, "ABCD")
+        self.assertEqual(expected_type, "TV")
+        self.assertEqual(expected_episodes, "12")
+        self.assertEqual(expected_status, "Not yet aired")
+        self.assertEqual(expected_description, "TEST DESCRIPTION")
+        self.assertEqual(expected_duration, "24.0")
+        genres = set(str(genre) for genre in genres)
+        self.assertEqual(expected_genres, genres)
+        self.assertEqual(expected_img_url, "https://placehold.jp/150x150.png")
+
+
+class TestUserAnimeSerializer(APITestCase):
+    def test_user_anime_serializer(self):
+        user = User.objects.create(
+            username="testuser", password="testpassword", email="hehxd@gmail.com"
+        )
+
+        profile = UserProfile.objects.create(
+            user=user, bio="test bio", avatar="def.png"
+        )
+
+        anime = Anime.objects.create(
+            title="ABCD",
+            type="TV",
+            episodes=12,
+            status="Not yet aired",
+            description="TEST DESCRIPTION",
+            duration=24,
+            img_url="https://placehold.jp/150x150.png",
+        )
+
+        genres = {
+            Genre.objects.create(name="Action"),
+            Genre.objects.create(name="Adventure"),
+            Genre.objects.create(name="Comedy"),
+        }
+
+        anime.genres.set(genres)
+
+        profile.save()
+        anime.save()
+
+        users_anime = UsersAnime.objects.create(
+            user=profile,
+            id_anime=anime,
+            state="completed",
+            score="5",
+            is_favorite=True,
+        )
+
+        seralizer = UserAnimeSerializer(users_anime)
+
+        expected_user = f"{seralizer.data['user']}"
+        expected_anime = f"{seralizer.data['id_anime']['title']}"
+        expected_state = f"{seralizer.data['state']}"
+        expected_score = f"{seralizer.data['score']}"
+        expected_is_favorite = f"{seralizer.data['is_favorite']}"
+        self.assertEqual(expected_user, "1")  # users id is taken
+        self.assertEqual(expected_anime, "ABCD")
+        self.assertEqual(expected_state, "completed")
+        self.assertEqual(expected_score, "5")
+        self.assertEqual(expected_is_favorite, "True")
+
+
+class TestAnimeReviewSerializer(APITestCase):
+    def test_anime_review_serializer(self):
+        user = User.objects.create(
+            username="testuser", password="testpassword", email="test@mail.com"
+        )
+
+        profile = UserProfile.objects.create(
+            user=user, bio="test bio", avatar="def.png"
+        )
+
+        anime = Anime.objects.create(
+            title="ABCD",
+            type="TV",
+            episodes=12,
+            status="Not yet aired",
+            description="TEST DESCRIPTION",
+            duration=24,
+            img_url="https://placehold.jp/150x150.png",
+        )
+
+        genres = {
+            Genre.objects.create(name="Action"),
+            Genre.objects.create(name="Adventure"),
+            Genre.objects.create(name="Comedy"),
+        }
+
+        anime.genres.set(genres)
+
+        profile.save()
+        anime.save()
+
+        review = AnimeReviews.objects.create(
+            user=profile,
+            anime=anime,
+            review="TEST REVIEW",
+        )
+
+        serializer = AnimeReviewSerializer(review)
+        print(serializer.data)
+        expected_user = f"{serializer.data['user']}"
+        expected_anime = f"{serializer.data['anime']}"
+        expected_review = f"{serializer.data['review']}"
+        self.assertEqual(expected_user, "testuser")
+        self.assertEqual(expected_anime, "ABCD")
+        self.assertEqual(expected_review, "TEST REVIEW")
