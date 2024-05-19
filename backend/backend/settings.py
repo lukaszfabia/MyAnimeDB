@@ -32,6 +32,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+
 TIME_ZONE = None
 
 
@@ -113,7 +114,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:5173",
     "http://192.168.1.26:5173",
+    "http://192.168.0.11:5173",
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 ROOT_URLCONF = "backend.urls"

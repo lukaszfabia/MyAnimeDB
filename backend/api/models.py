@@ -100,6 +100,7 @@ class Anime(models.Model):
     img_url = models.URLField()
     duration = models.FloatField(null=True)
     episodes = models.IntegerField(null=True)
+    rating = models.FloatField(null=True, default=0.0)
     genres = models.ManyToManyField(Genre, through="AnimeGenres")
 
     def __str__(self):

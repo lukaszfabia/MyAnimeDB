@@ -107,15 +107,21 @@ class SettingsView(generics.UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-#### endpoints with getting data
-
-
 class AllAnime(generics.ListAPIView):
     """Get all animes"""
 
-    queryset = Anime.objects.all()
+    # queryset = Anime.objects.all().order_by("title")
     serializer_class = AnimeSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = Anime.objects.all().order_by("title")
+        for elem in queryset:
+            rating = AnalyseAnime.compute_avg_rating(
+                UsersAnime.objects.filter(id_anime=elem)
+            )
+            elem.rating = rating
+        return queryset
 
 
 class GetAnimeByTitle(generics.ListAPIView):

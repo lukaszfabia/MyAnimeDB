@@ -3,7 +3,7 @@ import api from "../scripts/api";
 import { Form, Card, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-interface AnimeProps {
+export interface AnimeProps {
     id: string;
     title: string;
     img_url: string;
@@ -14,7 +14,7 @@ interface AnimeProps {
     genres: string[];
 }
 
-const AnimeEntry: React.FC<AnimeProps> = ({ id, title, img_url, rating, state, episodes, type, genres }) => {
+export const AnimeEntry: React.FC<AnimeProps> = ({ id, title, img_url, rating, state, episodes, type, genres }) => {
     return (
         <Row className="w-90 h-25 mb-5 p-5">
             <Col lg={2}>
