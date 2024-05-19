@@ -1,6 +1,5 @@
-from typing import Any
 from django import forms
-from .models import Anime, Genre, UsersAnime
+from .models import *
 
 
 class AnimeForm(forms.ModelForm):
@@ -11,12 +10,6 @@ class AnimeForm(forms.ModelForm):
     class Meta:
         model = Anime
         fields = "__all__"
-
-    # def save(self, commit=False) -> Any:
-    #     anime = super().save(commit=False)
-    #     anime.save()
-    #     self.save_m2m()
-    #     return anime
 
 
 class AnimeCollectionForm(forms.ModelForm):
@@ -57,5 +50,5 @@ class ReviewsForm(forms.ModelForm):
 
 class GenreForm(forms.ModelForm):
     class Meta:
-        model = Genre  # Upewnij się, że model Genre istnieje
-        fields = ["name"]  # Zastąp 'name' polami, które chcesz uwzględnić w formularzu
+        model = Genre
+        fields = ["name"]

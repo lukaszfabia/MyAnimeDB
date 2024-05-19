@@ -70,7 +70,7 @@ function ExampleAnime() {
     const keywordQuery = keyword ? `keywords=${keyword}` : "";
     const query = [genreQuery, statusQuery, keywordQuery].filter((query) => query.length > 0).join("&");
 
-    api.get(`/api/search/anime/${query !== "" ? query : "all"}`)
+    api.get(`/api/anime/search/${query !== "" ? query : "all"}`)
       .then((response) => {
         console.log(response.data);
         setAnime(response.data);

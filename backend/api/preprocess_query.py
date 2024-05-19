@@ -1,6 +1,6 @@
-from typing import List, Set
+from typing import List
 
-from api.models import Anime, UsersAnime
+from .models import *
 from django.db.models import Q
 
 from api.stats import AnalyseAnime

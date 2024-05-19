@@ -1,15 +1,13 @@
 from django.test import TestCase
 from .models import *
 from rest_framework.test import APITestCase
-from .serializers import (
-    AnimeReviewSerializer,
+from .user_serializers import UserAnimeSerializer, UserSerializer, UserProfileSerializer
+from .anime_serializers import (
     AnimeSerializer,
-    UserAnimeSerializer,
-    UserProfileSerializer,
-    UserSerializer,
+    AnimeReviewSerializer,
 )
 from django.contrib.auth.models import User
-from .serializers import UserSerializer
+
 
 # Create your tests here.
 

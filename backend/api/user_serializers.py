@@ -1,7 +1,10 @@
 from typing import Optional
 from rest_framework import serializers
-from api.models import Anime, AnimeReviews, UserProfile, UsersAnime
 from django.contrib.auth.models import User
+
+from api.anime_serializers import AnimeSerializer
+from .models import *
+
 
 DEFAULT_AVATAR = "avatars/def.png"
 
@@ -28,7 +31,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return value != "" and value is not None
 
     def create(self, validated_data):
-        print("jestem ")
         user_data = validated_data.pop("user")
         user = UserSerializer().create(user_data)
         if self.is_valid_avatar(validated_data.get("avatar")):
@@ -59,18 +61,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return instance
 
 
-class AnimeSerializer(serializers.ModelSerializer):
-    genres = serializers.StringRelatedField(many=True)
-
-    class Meta:
-        model = Anime
-        fields = "__all__"
-
-    def create(self, validated_data):
-        anime = Anime.objects.create(**validated_data)
-        return anime
-
-
 class UserAnimeSerializer(serializers.ModelSerializer):
     id_anime = AnimeSerializer(read_only=True)
 
@@ -87,28 +77,7 @@ class UserAnimeSerializer(serializers.ModelSerializer):
         instance.id_anime = validated_data.get("id_anime", instance.id_anime)
         instance.user = validated_data.get("user", instance.user)
         instance.state = validated_data.get("state", instance.state)
-        # instance.score = validated_data.get("score", instance.score)
         instance.score = validated_data.get("score", instance.score)
         instance.is_favorite = validated_data.get("is_favorite", instance.is_favorite)
-        instance.save()
-        return instance
-
-
-class AnimeReviewSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
-    anime = serializers.StringRelatedField()
-
-    class Meta:
-        model = AnimeReviews
-        fields = "__all__"
-
-    def create(self, validated_data):
-        review = AnimeReviews.objects.create(**validated_data)
-        return review
-
-    def update(self, instance, validated_data):
-        instance.user = validated_data.get("user", instance.user)
-        instance.anime = validated_data.get("anime", instance.anime)
-        instance.review = validated_data.get("review", instance.review)
         instance.save()
         return instance

@@ -25,7 +25,7 @@ const UserForm: React.FC<Props> = ({ isRequired, text, mode, children }) => {
 
     return (
         <>
-            {(mode === "login" || mode === "register" || mode === "update") && (
+            {(mode === "login" || mode === "register" || mode === "update" || mode === "reset") && (
                 <Form.Group controlId="formBasicUsername" className="mb-4">
                     <Form.Control
                         type="text"

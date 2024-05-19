@@ -16,6 +16,7 @@ interface ProfileDataProps {
 
 const ProfileData: React.FC<ProfileDataProps> = ({ username, email, avatar, bio }) => {
   const { name } = useParams<{ name: string }>();
+  console.log(avatar);
   return (
     <Container
       className="p-5"
@@ -203,7 +204,7 @@ const Profile: React.FC = () => {
       .then((data) => {
         setUsername(data.user.username);
         setEmail(data.user.email);
-        setAvatar(import.meta.env.VITE_API_URL + data.avatar);
+        setAvatar(data.avatar);
         setBio(data.bio);
       })
       .catch((error) => {

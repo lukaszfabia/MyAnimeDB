@@ -1,10 +1,12 @@
 import { Container, Form, Col, Row } from "react-bootstrap";
 import UserForm from "../components/NewDataForm";
+import { useNavigate } from "react-router-dom";
 
 export default function RestoringPassword() {
+    const navigate = useNavigate();
     const submit = (e: any) => {
         e.preventDefault();
-        console.log("Restore password");
+        alert("Under construction");
     }
 
     return (<Container className="mt-5 text-white py-5 rounded-5">

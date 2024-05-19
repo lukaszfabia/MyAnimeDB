@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AnimeGenres, AnimeReviews, Genre, UserProfile, Anime, UsersAnime
+from .models import *
 from .forms import AnimeCollectionForm, AnimeForm, GenreForm, ReviewsForm
 
 

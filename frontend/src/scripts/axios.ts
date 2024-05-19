@@ -14,7 +14,7 @@ export const register = async (e: any, navigate: (path: string) => void) => {
     formData.append("bio", "change me");
 
     await api
-        .post("/api/register/", formData, {
+        .post("/api/auth/register/", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -33,7 +33,7 @@ export const register = async (e: any, navigate: (path: string) => void) => {
 
 export const login = async (elem: any, rememberMe: boolean, navigate: (path: string) => void) => {
     elem.preventDefault()
-    await api.post("/api/token/", {
+    await api.post("/api/auth/token/", {
         username: elem.target.username.value,
         password: elem.target.password.value,
     }).then((response) => {
@@ -57,6 +57,7 @@ export const login = async (elem: any, rememberMe: boolean, navigate: (path: str
     }
     ).catch((error) => {
         alert("Wrong login or password!")
+        console.log(error);
         return;
     });
 }
@@ -84,7 +85,7 @@ export const updateProfile = async (e: any, navigate: (path: string) => void) =>
     }
 
     await api
-        .put("/api/user/settings/", formData, {
+        .put("/api/auth/settings/", formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             }
@@ -127,7 +128,6 @@ export const updateRating = async (e: any, animeId: number, navigate: (path: str
             console.log(error);
         });
 }
-
 
 
 

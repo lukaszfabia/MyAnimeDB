@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ACCESS_TOKEN } from "../constants/const";
 import axios from "axios";
 

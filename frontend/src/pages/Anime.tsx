@@ -321,7 +321,7 @@ const Anime: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    fetchData(`/api/animeid/${id}`)
+    fetchData(`/api/anime/${id}`)
       .then(data => {
         if (data.status === 404) {
           navigate("/notfound");

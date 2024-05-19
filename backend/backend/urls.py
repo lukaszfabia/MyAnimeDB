@@ -5,12 +5,9 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 
 from backend import settings
-from api.views import RegistrationView
 
 short_html = """
 <!DOCTYPE html>
@@ -51,5 +48,8 @@ class MapOfAServer(ListAPIView):
 urlpatterns = [
     path("", MapOfAServer.as_view(), name="home_view"),
     path("admin/", admin.site.urls),
-    path("api/", include("api.urls")),  # sending a user to api.urls file
+    path("api/auth/", include("api.auth_urls")),  # sending a user to api.auth_urls file
+    path("api/user/", include("api.user_urls")),  # sending a user to api.urls file
+    path("api/anime/", include("api.anime_urls")),
+    # path("api/", include("api.urls")),  # sending a user to api.urls file
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
