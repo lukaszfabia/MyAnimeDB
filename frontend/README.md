@@ -1,46 +1,50 @@
 # Informacje co zawiera interfejs użytkownika
 
+Frontend `(React + TypeScript + Vite, Bootstrap 5)`
 
 ## Strona główna
 
-Strona główna zawiera content z API, czyli rzeczy takie jak: 
-- Najnowsze anime
-- Najlepsze anime
-- Rekomendacje 
-
-## Formularze logowania i rejestracji
-
-Formularze logowania i rejestracji są dostępne dla użytkownika, który nie jest zalogowany.
-
+- [] jakieś dane, content
+- [] moze ostatnio dodane tytuły
 
 ## Strona z anime
 
 Strona z anime zawiera content z API, czyli rzeczy takie jak:
-- Nazwa anime
-- Opis anime
-- Ocena anime - stworzona przez community
-- Popularność anime - stworzona przez community
-- Jakieś dane o bajce
-- Recenzje - stworzone przez community, dla zalogowanych użytkowników
-- Dodanie recenzji - dla zalogowanych użytkowników
-- Dodanie do ulubiony - dla zalogowanych użytkowników
-- Dodanie do swojej kolekcji z danym statusem oraz oceną - dla zalogowanych użytkowników
 
+- [x] Nazwa anime
+- [x] Opis anime
+- [x] Ocena anime - stworzona przez community
+- [x] Popularność anime - stworzona przez community
+- [x] Jakieś dane o bajce
+- [x] Recenzje - stworzone przez community, dla zalogowanych użytkowników
+- [x] Dodanie recenzji - dla zalogowanych użytkowników
+- [x] Dodanie do ulubiony - dla zalogowanych użytkowników
+- [x] Dodanie do swojej kolekcji z danym statusem oraz oceną - dla zalogowanych użytkowników
 
 ## Strona z użytkownikiem
 
 Strona z użytkownikiem zawiera content z API, czyli rzeczy takie jak:
-- Nazwa użytkownika
-- Bio użytkownika
-- Avatar użytkownika
-- Ulubione anime użytkownika
-- Statystyki użytkownika: ulubione gatunki, czas spendzony, ilosc minut poświęconych na oglądanie anime.
 
+- [x] Nazwa użytkownika
+- [x] Bio użytkownika
+- [x] Avatar użytkownika
+- [x] Ulubione anime użytkownika
+- [x] Statystyki użytkownika: ulubione gatunki, czas spendzony, ilosc minut poświęconych na oglądanie anime.
 
 ## Strona z ustawieniami
 
 User ma możliwość zmiany swojego avatara, bio, hasła, emaila, nazwy użytkownika. Ustawienie jest dostępne w navbarze, po kliknięciu na swoje imię.
 
+## Formularze
+
+- [x] Logowanie
+- [x] Rejestracja
+- [] Odzyskiwanie hasła (forgot password)
+
 ## Strona ze swoją kolekcją anime
 
-User ma możliwość przeglądania swojej kolekcji anime, filtrowania po statusie.
+- [x] User ma możliwość przeglądania swojej kolekcji anime, filtrowania po statusie.
+
+## Przeszukiwanie anime
+
+- [x] przeszukiwanie po: gatunkach, typie, statusie, bądź keywordzie z search bara.

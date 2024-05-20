@@ -29,6 +29,7 @@ short_html = """
 
 </html>
 """
+from api.views.general_views import GetRoutesView
 
 
 class MapOfAServer(ListAPIView):
@@ -51,5 +52,8 @@ urlpatterns = [
     path("api/auth/", include("api.auth_urls")),  # sending a user to api.auth_urls file
     path("api/user/", include("api.user_urls")),  # sending a user to api.urls file
     path("api/anime/", include("api.anime_urls")),
+    path(
+        "api/", GetRoutesView.as_view(), name="get_routes"
+    ),  # sending a user to api.urls file
     # path("api/", include("api.urls")),  # sending a user to api.urls file
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

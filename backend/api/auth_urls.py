@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import include, path, re_path
 from .views.auth_views import *
 from .views.general_views import NoPage
 from rest_framework_simplejwt.views import (
@@ -11,5 +11,9 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("register/", RegistrationView.as_view(), name="register"),
     path("settings/", SettingsView.as_view(), name="settings"),
+    path(
+        "password_reset/",
+        include("django_rest_passwordreset.urls", namespace="password_reset"),
+    ),
     re_path(r"^.*$", NoPage.as_view(), name="fail"),
 ]
