@@ -20,6 +20,7 @@ class Preprocess:
     def split_keywords(self) -> None:
         """setting up a list of genres, keywords, types and status from the query string"""
         tokens: List[str] = re.split(r"&", self.query)
+        print(tokens)
         for e in tokens:
             if "genre" in e:
                 self.genres.append(e.split("=")[1])
@@ -43,6 +44,7 @@ class Preprocess:
 
     def search(self):
         query = Q()
+        print(self.types)
 
         if self.genres:
             query &= Q(genres__name__in=self.genres)

@@ -41,7 +41,6 @@ const InfoColumn: React.FC<{
 );
 
 const AnimeResult: React.FC<{
-  index?: number;
   id?: string;
   title: string;
   type: string;
@@ -50,7 +49,7 @@ const AnimeResult: React.FC<{
   img?: string;
   rating: string;
   isHeader?: boolean;
-}> = ({ index, id, title, type, status, episodes, img, rating, isHeader }) => {
+}> = ({ id, title, type, status, episodes, img, rating, isHeader }) => {
   return (
     <Row
       className={`my-3 mb-4 text-center ${
@@ -146,10 +145,13 @@ const ExampleAnime: React.FC = () => {
     const keyword = new URLSearchParams(window.location.search).get("keyword");
     const genres = new URLSearchParams(window.location.search).getAll("genre");
     const status = new URLSearchParams(window.location.search).getAll("status");
+    const type = new URLSearchParams(window.location.search).getAll("type");
+    const typeQuery = type.map((type) => `type=${type}`).join("&");
     const genreQuery = genres.map((genre) => `genre=${genre}`).join("&");
+    console.log(genreQuery);
     const statusQuery = status.map((status) => `status=${status}`).join("&");
     const keywordQuery = keyword ? `keywords=${keyword}` : "";
-    const query = [genreQuery, statusQuery, keywordQuery]
+    const query = [genreQuery, typeQuery, statusQuery, keywordQuery]
       .filter((query) => query.length > 0)
       .join("&");
 
@@ -201,8 +203,8 @@ const ExampleAnime: React.FC = () => {
     <Container className="text-white">
       <HeaderAnime onSort={handleSort} sortDirection={sortDirection} />
       <Row>
-        {currentAnime.map((anime: any) => (
-          <>
+        {currentAnime.map((anime: any, index: number) => (
+          <React.Fragment key={index}>
             <AnimeResult
               key={anime.id_anime}
               id={anime.id_anime}
@@ -214,7 +216,7 @@ const ExampleAnime: React.FC = () => {
               rating={anime.rating}
             />
             <hr />
-          </>
+          </React.Fragment>
         ))}
       </Row>
 

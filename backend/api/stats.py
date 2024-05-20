@@ -14,8 +14,7 @@ class AnalyseAnime:
             return 0.0
 
         return round(
-            sum([(float(anime.score)) for anime in animes]) / non_zero_scores,
-            2,
+            sum([(float(anime.score)) for anime in animes]) / non_zero_scores, 1
         )
 
     @staticmethod
