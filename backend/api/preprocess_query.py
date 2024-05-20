@@ -45,15 +45,19 @@ class Preprocess:
         query = Q()
 
         if self.genres:
-            query |= Q(genres__name__in=self.genres)
-        if self.types:
-            query |= Q(type__in=self.types)
+            query &= Q(genres__name__in=self.genres)
+
         if self.statuses:
-            query |= Q(status__in=self.statuses)
+            query &= Q(status__in=self.statuses)
+
+        if self.types:
+            query &= Q(type__in=self.types)
 
         if self.keyword:
-            query |= Q(title__icontains=self.keyword)
-            query |= Q(alternative_title__icontains=self.keyword)
+            keyword_query = Q(title__icontains=self.keyword) | Q(
+                alternative_title__icontains=self.keyword
+            )
+            query &= keyword_query
 
         queryset = Anime.objects.filter(query).distinct().order_by("title")
 
