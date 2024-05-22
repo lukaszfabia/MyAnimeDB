@@ -18,6 +18,7 @@ import ProtectedRoute from "./components/context/PrivateRoute";
 import Footer from "./components/Footer";
 import MyList from "./pages/MyList";
 import RestoringPassword from "./pages/RestoringPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -134,6 +135,13 @@ const router = createBrowserRouter([
     element: <>
       <CustomNavbar />
       <RestoringPassword />
+      <Footer />
+    </>,
+  }, {
+    path: "/login/forgot-password/:uid/:token",
+    element: <>
+      <CustomNavbar />
+      <ResetPassword />
       <Footer />
     </>,
   },

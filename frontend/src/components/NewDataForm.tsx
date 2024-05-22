@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { validatePassword } from '../scripts';
 
@@ -12,8 +12,8 @@ interface Props {
 const UserForm: React.FC<Props> = ({ isRequired, text, mode, children }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [password, setPassword] = useState<string>("");
-
     const [passwordError, setPasswordError] = useState<string>("");
+
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         validatePassword(e, mode !== "login", setPasswordError, setPassword);
@@ -25,7 +25,7 @@ const UserForm: React.FC<Props> = ({ isRequired, text, mode, children }) => {
 
     return (
         <>
-            {(mode === "login" || mode === "register" || mode === "update" || mode === "reset") && (
+            {(mode === "login" || mode === "register" || mode === "update") && (
                 <Form.Group controlId="formBasicUsername" className="mb-4">
                     <Form.Control
                         type="text"
@@ -37,7 +37,7 @@ const UserForm: React.FC<Props> = ({ isRequired, text, mode, children }) => {
                 </Form.Group>
             )}
 
-            {(mode === "register" || mode === "update" || mode === "reset") && (
+            {(mode === "register" || mode === "update") && (
                 <Form.Group controlId="formBasicEmail" className="mb-4">
                     <Form.Control
                         type="email"

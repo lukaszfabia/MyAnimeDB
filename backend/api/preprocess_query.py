@@ -63,7 +63,7 @@ class Preprocess:
 
         queryset = Anime.objects.filter(query).distinct().order_by("title")
 
-        return self.compute_rating(queryset)
+        return self.compute_rating(queryset) if queryset else []
 
     def compute_rating(self, queryset):
         for elem in queryset:

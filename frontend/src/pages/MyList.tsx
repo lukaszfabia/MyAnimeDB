@@ -24,7 +24,7 @@ export const AnimeEntry: React.FC<AnimeProps> = ({ id, title, img_url, rating, s
                 <Link to={`/anime/${id}`}><p className="lead"><b>{title}</b> {type}</p></Link>
                 {state === "plan-to-watch" ?
                     <p className="lead">Planned to watch</p>
-                    : <p className="lead">Rated on <b>{rating}</b> <span className="text-secondary">and {state}</span></p>}
+                    : <p className="lead"><span><b>{state}</b></span> and rated on <b>{rating}</b></p>}
                 <p className="lead">{episodes} <span className="text-secondary">episodes</span></p>
                 <p className="lead">{genres.join(", ")}</p>
             </Col>
@@ -34,13 +34,22 @@ export const AnimeEntry: React.FC<AnimeProps> = ({ id, title, img_url, rating, s
 
 const ListAnime: React.FC = () => {
     const [personalData, setPersonalData] = useState<any>([]);
+    const [types, setTypes] = useState<any>([]);
 
     useEffect(() => {
         api.get("/api/user/anime/list/").then((res) => {
-            console.log(res.data);
             setPersonalData(res.data);
         });
     }, []);
+
+
+    useEffect(() => {
+        api.get("/api/anime/props/").then((res) => {
+            setTypes(res.data.props[1].types)
+        })
+    }, [])
+
+
     const [filter, setFilter] = useState<string>("all");
 
     const handleFilterChange = (event: any) => {
@@ -61,13 +70,21 @@ const ListAnime: React.FC = () => {
                         <option value="plan-to-watch">Plan to watch</option>
                     </Form.Select>
                 </Col>
+                <Col lg={4} className="mb-3">
+                    <Form.Select value={filter} onChange={handleFilterChange} className="bg-dark dark-select">
+                        {types.map((type: any, index: number) =>
+                            (<option key={index} value={type.name}>{type.name}</option>)
+                        )}
+                    </Form.Select>
+                </Col>
                 {personalData
                     .filter((anime: any) => {
-                        return filter == anime.state || filter == "all";
+                        return filter == anime.state || filter == "all" || filter == anime.id_anime.type;
                     })
                     .map((anime: any, index: number) => (
                         <React.Fragment key={index}>
                             <hr />
+                            <h1 className="display-5"><span className="text-secondary">#</span>{index + 1}</h1>
                             <AnimeEntry
                                 id={anime.id_anime.id_anime}
                                 title={anime.id_anime.title}

@@ -6,6 +6,7 @@ from django.contrib import admin
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from api.views.general_views import GetRoutesView
 
 from backend import settings
 
@@ -29,7 +30,6 @@ short_html = """
 
 </html>
 """
-from api.views.general_views import GetRoutesView
 
 
 class MapOfAServer(ListAPIView):
@@ -45,6 +45,8 @@ class MapOfAServer(ListAPIView):
         ]
         return Response(endpoints)
 
+
+# cdwb tkyn hofc rsxx
 
 urlpatterns = [
     path("", MapOfAServer.as_view(), name="home_view"),

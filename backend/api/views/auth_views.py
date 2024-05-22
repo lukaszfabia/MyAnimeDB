@@ -1,9 +1,11 @@
+from django.http import QueryDict
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework import generics
+from django.contrib.auth import views
 
 from api.user_serializers import UserProfileSerializer
 from api.models import UserProfile
@@ -47,5 +49,65 @@ class SettingsView(generics.UpdateAPIView):
         return self.request.user.profile
 
     def put(self, request, *args, **kwargs):
-        print("pucik")
         return self.partial_update(request, *args, **kwargs)
+
+
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.auth import get_user_model
+from rest_framework import status, views
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from django.core.mail import send_mail
+
+User = get_user_model()
+
+
+class CustomPasswordResetView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+
+        if email is None:
+            return Response(
+                {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = get_object_or_404(UserProfile, user__email=email).user
+
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        send_mail(
+            html_message=f"Hello {user.username}!, Click <a href='http://localhost:5173/login/forgot-password/{uid}/{token}'>here</a> to reset your password",
+            from_email="admin@localhost",
+            recipient_list=[email],
+            subject="Password reset",
+            message="Password reset",
+        )
+
+        return Response(
+            {"message": "Password reset email has been sent"}, status=status.HTTP_200_OK
+        )
+
+
+class PasswordResetConfirmView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        uid = urlsafe_base64_decode(request.data.get("uid"))
+        token = request.data.get("token")
+
+        user = get_object_or_404(User, pk=uid)
+
+        if default_token_generator.check_token(user, token):
+            password = request.data.get("new_password")
+            user.set_password(password)
+            user.save()
+            return Response(
+                {"message": "Password has been reset"}, status=status.HTTP_200_OK
+            )
+
+        return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
