@@ -1,9 +1,7 @@
 import { Container, Form, Col, Row, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import api from "../scripts/api";
 
 export default function RestoringPassword() {
-    const navigate = useNavigate();
     const submit = (e: any) => {
         e.preventDefault();
         api.post("/api/auth/password_reset/", {

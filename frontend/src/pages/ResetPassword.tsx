@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../scripts/api';
 import { Container, Form, Col, Row } from 'react-bootstrap';
@@ -7,7 +7,6 @@ import UserForm from '../components/NewDataForm'
 const ResetPasswordPage: React.FC = () => {
     const { uid, token } = useParams<{ uid: string; token: string }>();
     const navigate = useNavigate();
-    const [password, setPassword] = useState('');
 
     const handleSubmit = async (elem: any) => {
         elem.preventDefault();

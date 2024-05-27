@@ -18,24 +18,6 @@ Jak odpalić?
 ```bash
 cd
 git clone https://github.com/lukaszfabia/MyAnimeDB
-```
-
-## Backend
-
-```bash
-cd MyAnimeDB/backend/
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python manage.py makemigrations
-python manage.py migrate
-python manage.py runserver 
-```
-
-## Frontend
-
-```bash
-cd MyAnimeDB/frontend/
-npm i
-npm run dev 
+cd MyAnimeDB
+sudo docker-compose up --build
 ```

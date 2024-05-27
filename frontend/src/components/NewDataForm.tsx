@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { validatePassword } from '../scripts';
 
@@ -11,7 +11,7 @@ interface Props {
 
 const UserForm: React.FC<Props> = ({ isRequired, text, mode, children }) => {
     const [showPassword, setShowPassword] = useState(false);
-    const [password, setPassword] = useState<string>("");
+    const [, setPassword] = useState<string>("");
     const [passwordError, setPasswordError] = useState<string>("");
 
 

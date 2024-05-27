@@ -1,6 +1,4 @@
 import { Container, Row, Col, Form } from "react-bootstrap";
-import { useState } from "react";
-import { validatePassword } from "../scripts";
 import { register } from "../scripts/axios";
 import { useNavigate } from "react-router-dom";
 import UserForm from "../components/NewDataForm"; // Assuming the file path is correct
