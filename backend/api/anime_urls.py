@@ -10,5 +10,7 @@ urlpatterns = [
     path("score/<int:id>", StatsForAnime.as_view(), name="add_review"),
     path("search/<str:keywords>", SearchAnime.as_view(), name="search"),
     path("props/", GetAllAnimeProps.as_view(), name="all_genres"),
+    path("most_popular/", MostPopularAnimes.as_view(), name="most_popular"),
+    path("random/", RandomAnime.as_view(), name="random"),
     re_path(r"^.*$", NoPage.as_view(), name="fail"),
 ]

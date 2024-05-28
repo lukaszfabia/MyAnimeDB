@@ -81,3 +81,19 @@ class UserAnimeSerializer(serializers.ModelSerializer):
         instance.is_favorite = validated_data.get("is_favorite", instance.is_favorite)
         instance.save()
         return instance
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = "__all__"
+
+    def create(self, validated_data):
+        post = Post.objects.create(**validated_data)
+        return post
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get("title", instance.title)
+        instance.content = validated_data.get("content", instance.content)
+        instance.save()
+        return instance

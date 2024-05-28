@@ -1,33 +1,28 @@
 import Carousel from "react-bootstrap/Carousel";
 
-let imgUrl = `https://wallpapers.com/images/featured/jujutsu-kaisen-4k-hccbh0fp7rl24yd0.jpg`;
-
-const slides = (placeholder = imgUrl) => {
-  return [
-    {
-      title: "Explore",
-      description: "the world of anime and manga with us!",
-      imgUrl:
-        "https://wallpapers.com/images/featured/jujutsu-kaisen-4k-hccbh0fp7rl24yd0.jpg",
-    },
-    {
-      title: "Create accout",
-      description: "to follow your favorite anime and manga series!",
-      imgUrl: placeholder,
-    },
-    {
-      title: "Discover",
-      description: "new titles",
-      imgUrl:
-        "http://m.gettywallpapers.com/wp-content/uploads/2023/05/Your-Name-4k-Background-Photos.jpg",
-    },
-  ];
-};
+const slides = [
+  {
+    title: "Explore",
+    description: "the world of anime and manga with us!",
+    imgUrl: `${import.meta.env.VITE_API_URL}/media/backgrounds/jjk.jpg`
+  },
+  {
+    title: "Create accout",
+    description: "to follow your favorite anime and manga series!",
+    imgUrl: `${import.meta.env.VITE_API_URL}/media/backgrounds/monogatari.jpg`
+  },
+  {
+    title: "Discover",
+    description: "new titles",
+    imgUrl: `${import.meta.env.VITE_API_URL}/media/backgrounds/kimi_no_na_wa.jpg`
+  },
+];
 
 export default function WelcomeContent() {
+
   return (
     <Carousel className="mt-5 mb-5">
-      {slides().map((slide, index) => (
+      {slides.map((slide, index) => (
         <Carousel.Item key={index} interval={5000}>
           <img className="d-block w-100" src={slide.imgUrl} />
           <Carousel.Caption>

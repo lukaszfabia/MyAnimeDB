@@ -17,7 +17,7 @@ class AnalyseAnime:
             sum([(float(anime.score)) for anime in animes]) / non_zero_scores, 1
         )
 
-    @staticmethod
+    @staticmethod  # unused
     def get_popularity(title: str) -> int:
         collections = UsersAnime.objects.all()
         popularity: Dict[str, int] = {}
@@ -40,7 +40,7 @@ class AnalyseAnime:
 class AnalyseData:
     """computes fav genres, total time spent during watching, watched episodes"""
 
-    def __init__(self, username: str):
+    def __init__(self, username: str) -> None:
         self.username = username
         self.animes: List[Anime] = UsersAnime.objects.filter(
             user__user__username=self.username

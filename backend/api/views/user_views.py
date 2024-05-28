@@ -2,14 +2,17 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework import generics
-
+from rest_framework.permissions import IsAdminUser
 
 from api.anime_serializers import AnimeSerializer
 from api.models import *
 from api.stats import AnalyseData
-from api.user_serializers import UserAnimeSerializer, UserProfileSerializer
+from api.user_serializers import (
+    PostSerializer,
+    UserAnimeSerializer,
+    UserProfileSerializer,
+)
 
 
 class AddAnimeToUser(
@@ -55,6 +58,9 @@ class AddAnimeToUser(
             serializer = UserAnimeSerializer(users_anime, data=data)
             if serializer.is_valid():
                 serializer.save()
+                # increment popularity
+                anime.popularity += 1
+                anime.save()
                 return Response(
                     {"message": "Anime added for user"}, status=status.HTTP_201_CREATED
                 )
@@ -68,6 +74,12 @@ class AddAnimeToUser(
     def update(self, request, *args, **kwargs):
         anime, profile = self.get_anime_and_profile(request, kwargs["id"])
         users_anime = UsersAnime.objects.get(user=profile, id_anime=anime)
+
+        if request.data.get("state") != "plan-to-watch":
+            anime.popularity += 1
+        elif anime.popularity > 0:
+            anime.popularity -= 1
+        anime.save()
 
         data = request.data.copy()
         data["user"] = profile.pk
@@ -185,3 +197,9 @@ class UserDataView(generics.RetrieveAPIView):
         return get_object_or_404(
             self.queryset, user__username=self.kwargs.get("username")
         )
+
+
+class GetPosts(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    queryset = Post.objects.order_by("-date_posted")
+    serializer_class = PostSerializer

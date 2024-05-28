@@ -126,7 +126,35 @@ class StatsForAnime(generics.RetrieveAPIView):
             {
                 "title": anime.title,
                 "average_score": AnalyseAnime.compute_avg_rating(animes),
-                "popularity": AnalyseAnime.get_popularity(anime.title),
+                "popularity": anime.popularity,
             },
             status=status.HTTP_200_OK,
         )
+
+
+class MostPopularAnimes(generics.ListAPIView):
+    """Get 3 most popular anime"""
+
+    permission_classes = [AllowAny]
+    serializer_class = AnimeSerializer
+
+    def get_queryset(self):
+        return Anime.objects.all().order_by("-popularity")[:3]
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RandomAnime(generics.RetrieveAPIView):
+    """Random anime for the day"""
+
+    permission_classes = [AllowAny]
+    serializer_class = AnimeSerializer
+    queryset = Anime.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        anime = self.queryset.order_by("?").first()
+        serializer = self.serializer_class(anime)
+        return Response(serializer.data, status=status.HTTP_200_OK)

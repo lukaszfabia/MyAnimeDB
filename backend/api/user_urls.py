@@ -14,5 +14,6 @@ urlpatterns = [
         IsOnUsersList.as_view(),
         name="check_is_on_list",
     ),
+    path("posts/", GetPosts.as_view(), name="get_posts"),
     re_path(r"^.*$", NoPage.as_view(), name="fail"),
 ]

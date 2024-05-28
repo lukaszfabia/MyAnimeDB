@@ -102,6 +102,7 @@ class Anime(models.Model):
     episodes = models.IntegerField(null=True)
     rating = models.FloatField(null=True, default=0.0)
     genres = models.ManyToManyField(Genre, through="AnimeGenres")
+    popularity = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -170,3 +171,23 @@ class AnimeReviews(models.Model):
 
     def __str__(self):
         return f"{self.anime} review by {self.user}"
+
+
+class Post(models.Model):
+    """represents a post
+    * user - the user (staff only) that wrote the post
+    * title - the title of the post (str)
+    * content - the content of the post (str)
+    * date_posted - the date the post was posted (DateTime)
+    """
+
+    id_post = models.AutoField(primary_key=True)
+    user = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, limit_choices_to={"user__is_staff": True}
+    )
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

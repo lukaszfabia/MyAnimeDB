@@ -1,40 +1,53 @@
-import { Col, Container, Row } from "react-bootstrap";
-import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
-import styles from "./showcase.module.css";
+import { Col, Container, Row, Card } from "react-bootstrap";
+import { Anime } from "../../pages/Anime";
+import { useEffect, useState } from "react";
+import api from "../../scripts/api";
+import { Link } from "react-router-dom";
 
-const CustomCard = () => {
+interface CustomCardProps {
+  index: number
+  anime: Anime
+}
+
+const CustomCard: React.FC<CustomCardProps> = ({ index, anime }) => {
+  const getShortDesc = (desc: string) => {
+    return desc.length > 80 ? desc.substring(0, 80) + "..." : desc;
+  }
+
   return (
-    <>
-      <Card bg="dark" text="white" className="mt-4">
-        <Card.Img variant="top" src="http://placeholder.co/400x300" />
-        <Card.Body>
-          <Card.Title>Card Title</Card.Title>
-          <Card.Text>
-            Some quick example text to build on the card title and make up the
-            bulk of the card's content.
-          </Card.Text>
-          <Button variant="primary">Go somewhere</Button>
+    <Col lg={4} xs={12} className="py-4">
+      <Card className="flex-row bg-dark text-white" key={index}>
+        <Card.Img src={anime.img_url} alt={anime.title} className="card-img-left" style={{ height: "300px", width: "auto" }} />
+        <Card.Body className="d-flex flex-column">
+          <Card.Title>
+            <Link to={`/anime/${anime.id_anime}`} className="text-white">{anime.title}</Link>
+          </Card.Title>
+          <Card.Text>{getShortDesc(anime.description)}</Card.Text>
         </Card.Body>
       </Card>
-    </>
+    </Col>
   );
 };
 
 const MostPopular = () => {
+  const [popularAnime, setPopularAnime] = useState<Anime[]>([]);
+  useEffect(() => {
+    api.get("/api/anime/most_popular/")
+      .then((response) => {
+        console.log(response.data);
+        setPopularAnime(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+
   return (
-    <Container className="py-5">
-      <h1 className={styles.h1}>Most popular anime</h1>
+    <Container className="py-5 text-white">
+      <h1 className="display-5">Most popular anime</h1>
       <Row>
-        <Col lg={4} className={styles.cardCol}>
-          <CustomCard />
-        </Col>
-        <Col lg={4} className={styles.cardCol}>
-          <CustomCard />
-        </Col>
-        <Col lg={4} className={styles.cardCol}>
-          <CustomCard />
-        </Col>
+        {popularAnime.map((anime: Anime, index: number) => <CustomCard index={index} anime={anime} />)}
       </Row>
     </Container>
   );

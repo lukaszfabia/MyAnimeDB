@@ -1,6 +1,12 @@
 from django.contrib import admin
 from .models import *
-from .forms import AnimeCollectionForm, AnimeForm, GenreForm, ReviewsForm
+from .forms import (
+    AnimeCollectionForm,
+    AnimeForm,
+    CreatePostForm,
+    GenreForm,
+    ReviewsForm,
+)
 
 
 @admin.register(Anime)
@@ -23,3 +29,8 @@ class ReviewsAdmin(admin.ModelAdmin):
 class GenreAdmin(admin.ModelAdmin):
     form = GenreForm
     list_display = ("name",)
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    form = CreatePostForm

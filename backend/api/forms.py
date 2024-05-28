@@ -52,3 +52,18 @@ class GenreForm(forms.ModelForm):
     class Meta:
         model = Genre
         fields = ["name"]
+
+
+class CreatePostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = "__all__"
+        widgets = {
+            "user": forms.Select(),
+            "title": forms.TextInput(),
+            "content": forms.Textarea(),
+        }
+
+    def create(self, validated_data):
+        post = Post.objects.create(**validated_data)
+        return post
