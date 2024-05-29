@@ -9,8 +9,6 @@ from .anime_serializers import (
 from django.contrib.auth.models import User
 
 
-# Create your tests here.
-
 ########################
 # Test Models
 ########################
@@ -205,6 +203,56 @@ class TestUsersAnime(TestCase):
         self.assertEqual(expected_is_favorite, "True")
 
 
+class TestCharacter(TestCase):
+
+    @classmethod
+    def setUpTestData(cls) -> None: ...
+
+    def test_character(self) -> None: ...
+
+
+class TestPost(TestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        user = User.objects.create(
+            username="testuser",
+            password="testpassword",
+            email="abcd@gmail.com",
+            is_staff=True,
+        )
+
+        user.save()
+
+        profile = UserProfile.objects.create(user=user, bio="test bio")
+
+        profile.save()
+
+        post = Post.objects.create(
+            user=profile,
+            title="Test Post",
+            content="Test Content",
+        )
+
+        post.save()
+
+    def test_post(self) -> None:
+        post = Post.objects.get(id_post=1)
+        expected_user = f"{post.user}"
+        expected_title = f"{post.title}"
+        expected_content = f"{post.content}"
+        self.assertEqual(expected_user, "testuser")
+        self.assertEqual(expected_title, "Test Post")
+        self.assertEqual(expected_content, "Test Content")
+
+
+class TestVoiceActor(TestCase):
+
+    @classmethod
+    def setUpTestData(cls) -> None: ...
+
+    def test_voice_actor(self) -> None: ...
+
+
 ########################
 # Test Serializers
 ########################
@@ -383,3 +431,8 @@ class TestAnimeReviewSerializer(APITestCase):
         self.assertEqual(expected_user, "testuser")
         self.assertEqual(expected_anime, "ABCD")
         self.assertEqual(expected_review, "TEST REVIEW")
+
+
+########################
+# Tests for endpoints
+########################

@@ -6,6 +6,8 @@ from .forms import (
     CreatePostForm,
     GenreForm,
     ReviewsForm,
+    CreateCharacterForm,
+    CreateVoiceActorForm,
 )
 
 
@@ -34,3 +36,13 @@ class GenreAdmin(admin.ModelAdmin):
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     form = CreatePostForm
+
+
+@admin.register(Characters)
+class CharacterAdmin(admin.ModelAdmin):
+    form = CreateCharacterForm
+
+
+@admin.register(VoiceActor)
+class VoiceActorAdmin(admin.ModelAdmin):
+    form = CreateVoiceActorForm

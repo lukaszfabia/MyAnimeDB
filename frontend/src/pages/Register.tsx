@@ -1,7 +1,7 @@
 import { Container, Row, Col, Form } from "react-bootstrap";
-import { register } from "../scripts/axios";
+import { register } from "../scripts/authFunc";
 import { useNavigate } from "react-router-dom";
-import UserForm from "../components/NewDataForm"; // Assuming the file path is correct
+import UserForm from "../components/NewDataForm";
 
 const RegisterForm: React.FC = () => {
   const navigate = useNavigate();

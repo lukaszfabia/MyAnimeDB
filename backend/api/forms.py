@@ -67,3 +67,21 @@ class CreatePostForm(forms.ModelForm):
     def create(self, validated_data):
         post = Post.objects.create(**validated_data)
         return post
+
+
+class CreateCharacterForm(forms.ModelForm):
+    class Meta:
+        model = Characters
+        fields = "__all__"
+        widgets = {
+            "img": forms.FileInput(attrs={"accept": "image/*"}),
+        }
+
+
+class CreateVoiceActorForm(forms.ModelForm):
+    class Meta:
+        model = VoiceActor
+        fields = "__all__"
+        widgets = {
+            "img": forms.FileInput(attrs={"accept": "image/*"}),
+        }

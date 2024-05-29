@@ -1,8 +1,8 @@
 import { Col, Container, Row, Card } from "react-bootstrap";
-import { Anime } from "../../pages/Anime";
 import { useEffect, useState } from "react";
 import api from "../../scripts/api";
 import { Link } from "react-router-dom";
+import { Anime } from "../../pages/Anime";
 
 interface CustomCardProps {
   index: number
@@ -29,7 +29,7 @@ const CustomCard: React.FC<CustomCardProps> = ({ index, anime }) => {
   );
 };
 
-const MostPopular = () => {
+const MostPopular: React.FC = () => {
   const [popularAnime, setPopularAnime] = useState<Anime[]>([]);
   useEffect(() => {
     api.get("/api/anime/most_popular/")

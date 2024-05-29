@@ -2,17 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../scripts/api";
 import { Form, Card, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-
-export interface AnimeProps {
-    id: string;
-    title: string;
-    img_url: string;
-    rating: string;
-    state: string;
-    episodes: string;
-    type: string;
-    genres: string[];
-}
+import { AnimeProps } from "../scripts";
 
 export const AnimeEntry: React.FC<AnimeProps> = ({ id, title, img_url, rating, state, episodes, type, genres }) => {
     return (

@@ -1,13 +1,12 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faPlus, faHeart, faCheck, faHeartCrack, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import CustomNavbar from "./Navigation";
 import Footer from "../components/Footer";
 import ProtectedRoute from "../components/context/PrivateRoute";
 import api from "../scripts/api";
-import { fetchData } from "../scripts";
+import { fetchData, Review } from "../scripts";
 import "./favanime.css";
 
 export interface Anime {
@@ -22,12 +21,6 @@ export interface Anime {
   genres: string[];
   status: string;
   description: string;
-}
-
-interface Review {
-  review: string;
-  user: string;
-  anime: string;
 }
 
 const AnimeData: React.FC<{ anime: Anime }> = ({ anime }) => {
@@ -249,6 +242,8 @@ const Stats: React.FC<{ anime: Anime }> = ({ anime }) => (
     </ProtectedRoute>
     <Info anime={anime} />
     <Synopsis desc={anime.description} />
+    <h2 className="display-5">Characters</h2>
+    <Characters id={anime.id_anime ?? ''} />
   </Container>
 );
 
@@ -333,12 +328,11 @@ const Anime: React.FC = () => {
   }, [id]);
 
   if (!anime) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" />;
   }
 
   return (
     <>
-      <CustomNavbar />
       <Container className="text-white py-5 mt-5">
         <Row className="d-flex justify-content-center align-items-center">
           <Col lg={4}>
@@ -356,5 +350,41 @@ const Anime: React.FC = () => {
     </>
   );
 };
+
+
+function DisplayCharacters({ characters }: { characters: any }) {
+  return <Col lg={4} className="mb-3">
+    <Card className="bg-dark text-white">
+      <Card.Img src={`${import.meta.env.VITE_API_URL}${characters.img}`} alt={characters.name} />
+      <Card.ImgOverlay>
+        <div className="overlay show">
+          <Card.Title className="text-center">{characters.name}</Card.Title>
+          <Card.Text className="text-center">{characters.description}</Card.Text>
+        </div>
+      </Card.ImgOverlay>
+    </Card>
+  </Col>
+}
+
+const Characters: React.FC<{ id: string }> = ({ id }) => {
+  const [characters, setCharacters] = useState<any[]>([]);
+
+  useEffect(() => {
+    api.get(`/api/anime/characters/${id}`)
+      .then(response => setCharacters(response.data))
+      .catch(console.error);
+  }, [id]);
+
+  return (
+    <Row>
+      {
+        characters.map((character: any) => (
+          <DisplayCharacters key={character.id_character} characters={character} />
+        ))
+      }
+    </Row>
+  );
+};
+
 
 export default Anime;

@@ -1,6 +1,6 @@
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { login } from "../scripts/axios";
+import { login } from "../scripts/authFunc";
 import UserForm from "../components/NewDataForm";
 
 const Login: React.FC = () => {

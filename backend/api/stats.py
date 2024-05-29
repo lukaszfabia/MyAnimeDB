@@ -18,23 +18,13 @@ class AnalyseAnime:
         )
 
     @staticmethod  # unused
-    def get_popularity(title: str) -> int:
-        collections = UsersAnime.objects.all()
-        popularity: Dict[str, int] = {}
-        for collection in collections:
-            if collection.id_anime.title in popularity:
-                popularity[collection.id_anime.title] += 1
-            else:
-                popularity[collection.id_anime.title] = 1
+    def fix_popularity(title: str) -> int:
+        animes = Anime.objects.order_by("-popularity").all()
+        fixed_popularity: Dict[str, int] = dict()
+        for index, anime in enumerate(animes):
+            fixed_popularity[anime.title] = index + 1
 
-        popularity = dict(
-            sorted(popularity.items(), key=lambda item: item[1], reverse=True)
-        )
-
-        for rank, (anime_title, _) in enumerate(popularity.items()):
-            popularity[anime_title] = rank + 1
-
-        return popularity.get(title, 0)
+        return fixed_popularity.get(title, 0)
 
 
 class AnalyseData:

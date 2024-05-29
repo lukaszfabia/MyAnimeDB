@@ -12,5 +12,6 @@ urlpatterns = [
     path("props/", GetAllAnimeProps.as_view(), name="all_genres"),
     path("most_popular/", MostPopularAnimes.as_view(), name="most_popular"),
     path("random/", RandomAnime.as_view(), name="random"),
+    path("characters/<int:id>", AnimeCharacters.as_view(), name="characters"),
     re_path(r"^.*$", NoPage.as_view(), name="fail"),
 ]

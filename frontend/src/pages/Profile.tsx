@@ -1,22 +1,17 @@
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { fetchData } from "../scripts";
+import { ProfileProps, StatsData, fetchData } from "../scripts";
 import Footer from "../components/Footer";
 import "./favanime.css";
 import ProtectedRoute from "../components/context/PrivateRoute";
 import NoPage from "./NotFoundPage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 
-interface ProfileDataProps {
-  username: string;
-  email: string;
-  avatar?: string;
-  bio: string;
-}
 
-const ProfileData: React.FC<ProfileDataProps> = ({ username, email, avatar, bio }) => {
+const ProfileData: React.FC<ProfileProps> = ({ username, email, avatar, bio, is_staff }) => {
   const { name } = useParams<{ name: string }>();
-  console.log(avatar);
   return (
     <Container
       className="p-5"
@@ -25,7 +20,7 @@ const ProfileData: React.FC<ProfileDataProps> = ({ username, email, avatar, bio 
         borderRadius: "50px",
       }}
     >
-      <h2 className="text-center">{username}</h2>
+      <h2 className="text-center">{username} {is_staff ? <FontAwesomeIcon icon={faCheckCircle} /> : null}</h2>
       <hr />
       <Row className="d-flex justify-content-center align-items-center mb-4">
         <img
@@ -72,12 +67,6 @@ const ProfileData: React.FC<ProfileDataProps> = ({ username, email, avatar, bio 
     </Container>
   );
 };
-
-interface StatsData {
-  total_time: string;
-  watched_episodes: string;
-  fav_genres: string[];
-}
 
 const Stats: React.FC = () => {
   const { name } = useParams<{ name: string }>();
@@ -195,6 +184,7 @@ const Profile: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [bio, setBio] = useState<string>("");
+  const [is_staff, setIsStaff] = useState<boolean>(false);
 
   const { name } = useParams<{ name: string }>();
   const navigate = useNavigate();
@@ -206,6 +196,7 @@ const Profile: React.FC = () => {
         setEmail(data.user.email);
         setAvatar(data.avatar);
         setBio(data.bio);
+        setIsStaff(data.user.is_staff);
       })
       .catch((error) => {
         console.error(error);
@@ -223,6 +214,7 @@ const Profile: React.FC = () => {
               email={email}
               avatar={avatar}
               bio={bio}
+              is_staff={is_staff}
             />
           </Col>
           <Col lg={8}>

@@ -15,12 +15,11 @@ class UserProfile(models.Model):
         "Biography", max_length=200, default="change me", null=True, blank=True
     )
 
-    @property
-    def get_username(self):
-        return self.user.username
-
     def __str__(self):
         return str(self.user.username)
+
+    def get_status(self):
+        return self.user.is_staff
 
 
 class Genre(models.Model):
@@ -191,3 +190,38 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class VoiceActor(models.Model):
+    """represents a voice actor
+    * name - the name of the voice actor (str)
+    * characters - the characters that the voice actor has voiced (Characters)
+    * img_url - the url of the voice actor's image (str)
+    """
+
+    id_voice_actor = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    img = models.ImageField(upload_to="actors_img/", null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.last_name} {self.name}"
+
+
+class Characters(models.Model):
+    """Represents a character in an anime
+    * name - the name of the character (str)
+    * anime - the anime that the character is in (Anime)
+    * description - the description of the character (str)
+    * img - the image of the character (str)
+    """
+
+    id_character = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    anime = models.ManyToManyField(Anime, related_name="characters")
+    voice_actors = models.ManyToManyField(VoiceActor, related_name="characters")
+    description = models.TextField()
+    img = models.ImageField(upload_to="character_img/", null=True, blank=True)
+
+    def __str__(self):
+        return self.name

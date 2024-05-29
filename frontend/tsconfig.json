@@ -23,7 +23,8 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src"
+    "src",
+    "src/scripts/auth_func.ts" // Add the missing file here
   ],
   "references": [
     {

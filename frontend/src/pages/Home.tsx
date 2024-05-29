@@ -4,14 +4,8 @@ import WelcomeContent from "../components/carousel/Caroulsel";
 import MostPopular from "../components/content/showcase";
 import Footer from "../components/Footer";
 import api from "../scripts/api";
-import { Card, Container, Row } from "react-bootstrap";
-
-interface PostsProps {
-  content: string
-  date_posted: string
-  id_post: number
-  title: string
-}
+import { Card, Container } from "react-bootstrap";
+import { PostsProps } from "../scripts";
 
 const Content: React.FC = () => {
   const [posts, setPosts] = useState<PostsProps[]>([]);

@@ -36,3 +36,57 @@ export const validatePassword = (
     document.getElementById("submit")?.removeAttribute("disabled");
   }
 };
+
+
+// interfaces 
+
+export interface CheckboxProps {
+  id: string;
+  label: string;
+  value: string;
+  name: string;
+}
+
+export interface AnimePropertyData {
+  id: string;
+  name: string;
+}
+
+// do wywalenia 
+export interface AnimeProps {
+  id: string;
+  title: string;
+  img_url: string;
+  rating: string;
+  state: string;
+  episodes: string;
+  type: string;
+  genres: string[];
+}
+
+export interface ProfileProps {
+  username: string;
+  email: string;
+  avatar?: string;
+  bio: string;
+  is_staff: boolean;
+}
+
+export interface StatsData {
+  total_time: string;
+  watched_episodes: string;
+  fav_genres: string[];
+}
+
+export interface PostsProps {
+  content: string
+  date_posted: string
+  id_post: number
+  title: string
+}
+
+export interface Review {
+  review: string;
+  user: string;
+  anime: string;
+}
