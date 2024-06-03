@@ -5,10 +5,17 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework import generics
-from django.contrib.auth import views
 
 from api.user_serializers import UserProfileSerializer
 from api.models import UserProfile
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.auth import get_user_model
+from rest_framework import status, views
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from django.core.mail import send_mail
 
 
 class RegistrationView(generics.CreateAPIView):
@@ -17,7 +24,7 @@ class RegistrationView(generics.CreateAPIView):
     serializer_class = UserProfileSerializer
     queryset = UserProfile.objects.all()
     permission_classes = [AllowAny]
-    parser_classes = [MultiPartParser, JSONParser]  # czy to jest potrzebne?
+    parser_classes = [MultiPartParser, JSONParser]
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -52,16 +59,7 @@ class SettingsView(generics.UpdateAPIView):
         return self.partial_update(request, *args, **kwargs)
 
 
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from django.contrib.auth import get_user_model
-from rest_framework import status, views
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from django.core.mail import send_mail
-
-User = get_user_model()
+# User = get_user_model()
 
 
 class CustomPasswordResetView(generics.CreateAPIView):
@@ -100,7 +98,7 @@ class PasswordResetConfirmView(generics.CreateAPIView):
         uid = urlsafe_base64_decode(request.data.get("uid"))
         token = request.data.get("token")
 
-        user = get_object_or_404(User, pk=uid)
+        user = get_object_or_404(get_user_model(), pk=uid)
 
         if default_token_generator.check_token(user, token):
             password = request.data.get("new_password")

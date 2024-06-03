@@ -24,7 +24,7 @@
   },
   "include": [
     "src",
-    "src/scripts/auth_func.ts" // Add the missing file here
+    // "src/scripts/auth_func.ts" // Add the missing file here
   ],
   "references": [
     {

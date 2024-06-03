@@ -1,17 +1,7 @@
 __pycache__
 
-*.aux
-*.log
-*.synctex.gz
-*.fdb_latexmk
-*.fls
-*.out
-*.toc
-*.bbl
-*.synctex(busy)
-
-
-.env
+# frontend/.env
+backend/backend/.env
 .venv
 node_modeules
 migrations

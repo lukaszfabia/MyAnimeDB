@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
     """represents a user profile
-    * user - the user that owns the profile (User)
-    * avatar - the user's profile picture (ImageField)
-    * bio - the user's biography (str)
+    * user (User) - the user that owns the profile
+    * avatar (ImageField) - the user's profile picture
+    * bio (TextField) - the user's biography
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
@@ -24,7 +24,7 @@ class UserProfile(models.Model):
 
 class Genre(models.Model):
     """represents a genre of anime
-    * name - the name of the genre (str)
+    * name (CharField) - the name of the genre
     """
 
     GENRE = [
@@ -133,11 +133,11 @@ class AnimeGenres(models.Model):
 
 class UsersAnime(models.Model):
     """represents an anime in a user's list
-    * id_anime - the anime that the user has (Anime)
-    * user - the user that has the anime (UserProfile)
-    * state - the state of the anime in the user's list (str)
-    * score - the score that the user gave to the anime (str)
-    * is_favorite - whether the anime is a favorite of the user (bool)
+    * id_anime (fk) - the anime that the user has
+    * user (fk) - the user that has the anime
+    * state (CharField) - the state of the anime in the user's list
+    * score (CharField) - the score that the user gave to the anime
+    * is_favorite (BooleanField) - whether the anime is a favorite of the user
     """
 
     ANIME_STATE = [
@@ -173,9 +173,9 @@ class UsersAnime(models.Model):
 
 class AnimeReviews(models.Model):
     """represents a review of an anime
-    * user - the user that wrote the review (UserProfile)
-    * anime (fk) - the anime that the review is about (Anime)
-    * review (TextField) - the review itself (str)
+    * user (fk) - the user that wrote the review
+    * anime (fk) - the anime that the review is about
+    * review (TextField) - the review itself
     """
 
     id_review = models.AutoField(primary_key=True)
@@ -190,9 +190,9 @@ class AnimeReviews(models.Model):
 class Post(models.Model):
     """represents a post
     * user (fk) - the user (staff only) that wrote the post
-    * title (CharField) - the title of the post (str)
-    * content (TextField) - the content of the post (str)
-    * date_posted (Date/Time) - the date the post was posted (DateTime)
+    * title (CharField) - the title of the post
+    * content (TextField) - the content of the post
+    * date_posted (Date/Time) - the date the post was posted
     """
 
     id_post = models.AutoField(primary_key=True)
@@ -209,9 +209,9 @@ class Post(models.Model):
 
 class VoiceActor(models.Model):
     """represents a voice actor
-    * name - the name of the voice actor (str)
-    * characters - the characters that the voice actor has voiced (Characters)
-    * img_url - the url of the voice actor's image (str)
+    * name (CharField) - the name of the voice actor
+    * last_name (CharField) - the last name of the voice actor
+    * img (ImageField) - the image of the voice actor
     """
 
     id_voice_actor = models.AutoField(primary_key=True)
@@ -225,10 +225,10 @@ class VoiceActor(models.Model):
 
 class Characters(models.Model):
     """Represents a character in an anime
-    * name - the name of the character (str)
-    * anime - the anime that the character is in (Anime)
-    * description - the description of the character (str)
-    * img - the image of the character (str)
+    * name (CharField) - the name of the character
+    * anime (ManyToManyField) - the anime that the character is in
+    * description (TextField) - the description of the character
+    * img (ImageField) - the image of the character
     """
 
     id_character = models.AutoField(primary_key=True)
