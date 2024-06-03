@@ -3,8 +3,8 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import "./App.css";
 import Home from "../src/pages/Home";
+import "./App.css";
 import LoginForm from "./pages/Login";
 import RegisterForm from "./pages/Register";
 import NoPage from "./pages/NotFoundPage";
@@ -58,7 +58,7 @@ const router = createBrowserRouter([
         <CustomNavbar />
         <Profile />
       </ProtectedRoute>
-    )
+    ),
   },
   {
     path: "/profile/:name/myanime",
@@ -130,27 +130,35 @@ const router = createBrowserRouter([
         element: <h1>Search Manga</h1>,
       },
     ],
-  }, {
+  },
+  {
     path: "/login/forgot-password",
-    element: <>
-      <CustomNavbar />
-      <RestoringPassword />
-      <Footer />
-    </>,
-  }, {
+    element: (
+      <>
+        <CustomNavbar />
+        <RestoringPassword />
+        <Footer />
+      </>
+    ),
+  },
+  {
     path: "/login/forgot-password/:uid/:token",
-    element: <>
-      <CustomNavbar />
-      <ResetPassword />
-      <Footer />
-    </>,
+    element: (
+      <>
+        <CustomNavbar />
+        <ResetPassword />
+        <Footer />
+      </>
+    ),
   },
   {
     path: "*",
-    element: <>
-      <CustomNavbar />
-      <NoPage />
-    </>,
+    element: (
+      <>
+        <CustomNavbar />
+        <NoPage />
+      </>
+    ),
   },
 ]);
 

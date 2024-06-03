@@ -3,9 +3,9 @@ import { Navbar, Container, Nav, FormControl, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Form, Link } from "react-router-dom";
-import "./navbar.css";
-import LoggedNavbar from "../components/navbars/loggedNavbar";
-import NotLoggedNavbar from "../components/navbars/notloggedNavbar";
+import "../styles/navbar.css";
+import LoggedNavbar from "../components/navbars/LoggedNavbar";
+import NotLoggedNavbar from "../components/navbars/NotLoggedNavbar";
 import ProtectedRoute from "../components/context/PrivateRoute";
 
 export default function CustomNavbar() {
@@ -22,7 +22,7 @@ export default function CustomNavbar() {
     e.preventDefault();
     const keyword = e.target[0].value;
     window.location.href = `/search/anime?keyword=${keyword}`;
-  }
+  };
 
   return (
     <header>
@@ -44,8 +44,18 @@ export default function CustomNavbar() {
           </Navbar.Toggle>
           <Navbar.Collapse id="basic-navbar-nav" className="text-center">
             <Nav className="ms-auto">
-              <Nav.Link href="/search/anime" active={location.pathname === "/search/anime"}>Anime</Nav.Link>
-              <Nav.Link href="/search/manga" active={location.pathname === "/search/manga"}>Manga</Nav.Link>
+              <Nav.Link
+                href="/search/anime"
+                active={location.pathname === "/search/anime"}
+              >
+                Anime
+              </Nav.Link>
+              <Nav.Link
+                href="/search/manga"
+                active={location.pathname === "/search/manga"}
+              >
+                Manga
+              </Nav.Link>
               <Form className="d-flex" onSubmit={handleSearch}>
                 <FormControl
                   type="search"

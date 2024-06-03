@@ -1,0 +1,20 @@
+.pagination > li > a {
+  background-color: black;
+  color: #eee;
+}
+
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover {
+  color: black;
+  background-color: #eee;
+  border-color: #eee;
+}
+
+.pagination > .active > span,
+.pagination > .active > a {
+  background-color: #eee;
+  border-color: black;
+  color: black;
+}

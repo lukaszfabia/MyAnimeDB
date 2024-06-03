@@ -1,13 +1,28 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
-import { Button, Card, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faPlus, faHeart, faCheck, faHeartCrack, faMinus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faStar,
+  faPlus,
+  faHeart,
+  faCheck,
+  faHeartCrack,
+  faMinus,
+} from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import ProtectedRoute from "../components/context/PrivateRoute";
 import api from "../scripts/api";
 import { fetchData, Review } from "../scripts";
-import "./favanime.css";
+import "../styles/favanime.css";
 
 export interface Anime {
   id_anime: string;
@@ -30,22 +45,25 @@ const AnimeData: React.FC<{ anime: Anime }> = ({ anime }) => {
   const [popularity, setPopularity] = useState<number>(0);
 
   useEffect(() => {
-    api.get(`/api/user/is-fav-anime/${anime.id_anime}`)
-      .then(response => setIsFav(response.status === 200))
+    api
+      .get(`/api/user/is-fav-anime/${anime.id_anime}`)
+      .then((response) => setIsFav(response.status === 200))
       .catch(() => setIsFav(false));
   }, [anime.id_anime]);
 
   useEffect(() => {
-    api.get(`/api/user/has-anime/${anime.id_anime}`)
-      .then(response => setIsOnUsersList(response.status === 200))
+    api
+      .get(`/api/user/has-anime/${anime.id_anime}`)
+      .then((response) => setIsOnUsersList(response.status === 200))
       .catch(() => setIsOnUsersList(false));
   }, [anime.id_anime]);
 
   useEffect(() => {
-    api.get(`/api/anime/score/${anime.id_anime}`)
-      .then(response => {
-        setCommunityScore(response.data.average_score)
-        setPopularity(response.data.popularity)
+    api
+      .get(`/api/anime/score/${anime.id_anime}`)
+      .then((response) => {
+        setCommunityScore(response.data.average_score);
+        setPopularity(response.data.popularity);
       })
       .catch(() => setCommunityScore(0));
   }, [anime.id_anime]);
@@ -53,8 +71,11 @@ const AnimeData: React.FC<{ anime: Anime }> = ({ anime }) => {
   const handleAddFav = () => {
     const newFavState = !isFav;
     setIsFav(newFavState);
-    api.put(`/api/user/add-anime/${anime.id_anime}`, { is_favorite: newFavState })
-      .then(response => {
+    api
+      .put(`/api/user/add-anime/${anime.id_anime}`, {
+        is_favorite: newFavState,
+      })
+      .then((response) => {
         if (response.status !== 200) {
           setIsFav(!newFavState);
         }
@@ -63,12 +84,13 @@ const AnimeData: React.FC<{ anime: Anime }> = ({ anime }) => {
   };
 
   const handleAddList = () => {
-    api.put(`/api/user/add-anime/${anime.id_anime}`, {
-      id_anime: anime.id_anime,
-      state: "plan-to-watch",
-      score: "0",
-    })
-      .then(response => {
+    api
+      .put(`/api/user/add-anime/${anime.id_anime}`, {
+        id_anime: anime.id_anime,
+        state: "plan-to-watch",
+        score: "0",
+      })
+      .then((response) => {
         if (response.status === 200) {
           setIsOnUsersList(true);
         }
@@ -77,12 +99,22 @@ const AnimeData: React.FC<{ anime: Anime }> = ({ anime }) => {
   };
 
   return (
-    <Container className="p-5" style={{ backgroundColor: "rgba(255,255,255, 0.1)", borderRadius: "50px" }}>
+    <Container
+      className="p-5"
+      style={{
+        backgroundColor: "rgba(255,255,255, 0.1)",
+        borderRadius: "50px",
+      }}
+    >
       <h2 className="text-center">{anime.title}</h2>
       <span className="text-secondary">{anime.alternative_title}</span>
       <hr />
       <Row className="d-flex justify-content-center align-items-center mb-4">
-        <img src={anime.img_url} alt="profile" className="img-fluid rounded-5" />
+        <img
+          src={anime.img_url}
+          alt="profile"
+          className="img-fluid rounded-5"
+        />
       </Row>
       <hr />
       <Row>
@@ -94,21 +126,30 @@ const AnimeData: React.FC<{ anime: Anime }> = ({ anime }) => {
         </Col>
         <Col lg={6}>
           <h2 className="text-center">
-            <p><span className="text-secondary">#</span>{popularity}</p>
+            <p>
+              <span className="text-secondary">#</span>
+              {popularity}
+            </p>
           </h2>
         </Col>
       </Row>
       <hr />
       <ProtectedRoute error={null}>
         <Row className="py-4">
-          <Col xs={6} className="d-flex justify-content-center align-items-center">
+          <Col
+            xs={6}
+            className="d-flex justify-content-center align-items-center"
+          >
             <Button variant="outline-light" onClick={handleAddFav}>
               <small>
                 <FontAwesomeIcon icon={isFav ? faHeart : faHeartCrack} />
               </small>
             </Button>
           </Col>
-          <Col xs={6} className="d-flex justify-content-center align-items-center">
+          <Col
+            xs={6}
+            className="d-flex justify-content-center align-items-center"
+          >
             <Button variant="outline-light" onClick={handleAddList}>
               <small>
                 <FontAwesomeIcon icon={isOnUsersList ? faMinus : faPlus} />
@@ -124,11 +165,21 @@ const AnimeData: React.FC<{ anime: Anime }> = ({ anime }) => {
 const Info: React.FC<{ anime: Anime }> = ({ anime }) => (
   <Row className="py-3">
     <h1 className="display-5">Information</h1>
-    <p className="lead"><strong>Type:</strong> {anime.type}</p>
-    <p className="lead"><strong>Episodes:</strong> {anime.episodes}</p>
-    <p className="lead"><strong>Duration:</strong> {anime.duration} min</p>
-    <p className="lead"><strong>Genres:</strong> {anime.genres.join(", ")}</p>
-    <p className="lead"><strong>Status:</strong> {anime.status}</p>
+    <p className="lead">
+      <strong>Type:</strong> {anime.type}
+    </p>
+    <p className="lead">
+      <strong>Episodes:</strong> {anime.episodes}
+    </p>
+    <p className="lead">
+      <strong>Duration:</strong> {anime.duration} min
+    </p>
+    <p className="lead">
+      <strong>Genres:</strong> {anime.genres.join(", ")}
+    </p>
+    <p className="lead">
+      <strong>Status:</strong> {anime.status}
+    </p>
   </Row>
 );
 
@@ -146,16 +197,18 @@ const RatingManage: React.FC<{ id: string }> = ({ id }) => {
   const [isChangedState, setIsChangedState] = useState<boolean>(false);
 
   useEffect(() => {
-    api.get(`/api/user/has-anime/${id}`)
-      .then(response => setIsOnUsersList(response.status === 200))
+    api
+      .get(`/api/user/has-anime/${id}`)
+      .then((response) => setIsOnUsersList(response.status === 200))
       .catch(() => setIsOnUsersList(false));
   }, [id]);
 
   useEffect(() => {
     console.log(isOnUsersList);
     if (isOnUsersList) {
-      api.get(`/api/user/add-anime/${id}`)
-        .then(response => {
+      api
+        .get(`/api/user/add-anime/${id}`)
+        .then((response) => {
           if (response.status === 200) {
             const data = response.data;
             setStatus(String(data.state).toLowerCase().replace(" ", "-"));
@@ -182,13 +235,16 @@ const RatingManage: React.FC<{ id: string }> = ({ id }) => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const requestData = { state: status !== "" ? status : "watching", score: rating !== "" ? rating : "0" };
+    const requestData = {
+      state: status !== "" ? status : "watching",
+      score: rating !== "" ? rating : "0",
+    };
     const creatOrUpdate = isOnUsersList ? api.put : api.post;
     creatOrUpdate(`/api/user/add-anime/${id}`, requestData)
-      .then(response => {
+      .then((response) => {
         setIsChangedState(response.status === 200 || response.status === 201); // XDDDDDD
       })
-      .catch(error => {
+      .catch((error) => {
         alert("Something went wrong");
         console.error(error);
       });
@@ -199,12 +255,20 @@ const RatingManage: React.FC<{ id: string }> = ({ id }) => {
       <Row className="py-3">
         <Col lg={4} className="mb-2">
           <Button type="submit" variant="outline-light" id="idAddOrUpadate">
-            {isChangedState ? <FontAwesomeIcon icon={faCheck} /> : <FontAwesomeIcon icon={faPlus} />}
+            {isChangedState ? (
+              <FontAwesomeIcon icon={faCheck} />
+            ) : (
+              <FontAwesomeIcon icon={faPlus} />
+            )}
             {isOnUsersList ? " Update" : " Add"}
           </Button>
         </Col>
         <Col lg={4} className="mb-2">
-          <Form.Select className="dark-select" value={status} onChange={handleStatusChange}>
+          <Form.Select
+            className="dark-select"
+            value={status}
+            onChange={handleStatusChange}
+          >
             <option value="watching">Watching</option>
             <option value="completed">Completed</option>
             <option value="on-hold">On Hold</option>
@@ -235,7 +299,10 @@ const RatingManage: React.FC<{ id: string }> = ({ id }) => {
 };
 
 const Stats: React.FC<{ anime: Anime }> = ({ anime }) => (
-  <Container className="p-5" style={{ backgroundColor: "rgba(255,255,255, 0.1)", borderRadius: "50px" }}>
+  <Container
+    className="p-5"
+    style={{ backgroundColor: "rgba(255,255,255, 0.1)", borderRadius: "50px" }}
+  >
     <h1 className="display-4">Overview</h1>
     <ProtectedRoute error={null}>
       <RatingManage id={anime.id_anime} />
@@ -243,7 +310,7 @@ const Stats: React.FC<{ anime: Anime }> = ({ anime }) => (
     <Info anime={anime} />
     <Synopsis desc={anime.description} />
     <h2 className="display-5">Characters</h2>
-    <Characters id={anime.id_anime ?? ''} />
+    <Characters id={anime.id_anime ?? ""} />
   </Container>
 );
 
@@ -254,22 +321,30 @@ const Reviews: React.FC = () => {
   const handleSubmitReview = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const review = new FormData(event.currentTarget).get("review") as string;
-    api.post(`/api/anime/reviews/${id}`, { review })
+    api
+      .post(`/api/anime/reviews/${id}`, { review })
       .then(() => fetchComments())
       .catch(console.error);
     event.currentTarget.reset();
   };
 
   const fetchComments = () => {
-    api.get(`/api/anime/reviews/${id}`)
-      .then(response => setComments(response.data))
+    api
+      .get(`/api/anime/reviews/${id}`)
+      .then((response) => setComments(response.data))
       .catch(console.error);
   };
 
   useEffect(fetchComments, [id]);
 
   return (
-    <Container className="py-5 mt-5 p-4" style={{ backgroundColor: "rgba(255,255,255, 0.1)", borderRadius: "50px" }}>
+    <Container
+      className="py-5 mt-5 p-4"
+      style={{
+        backgroundColor: "rgba(255,255,255, 0.1)",
+        borderRadius: "50px",
+      }}
+    >
       <Row>
         <h1 className="display-4 p-3">Reviews</h1>
       </Row>
@@ -281,7 +356,7 @@ const Reviews: React.FC = () => {
               className="form-control bg-dark text-white border-secondary"
               placeholder="Write your review here..."
               name="review"
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             />
           </Col>
           <Col lg={2} className="d-flex justify-content-start">
@@ -291,21 +366,21 @@ const Reviews: React.FC = () => {
           </Col>
         </Row>
       </Form>
-      {comments && comments.map((comment, index) => (
-        <React.Fragment key={index}>
-          <figure className="p-4">
-            <blockquote className="blockquote">
-              <p>{comment.review}</p>
-            </blockquote>
-            <figcaption className="blockquote-footer">
-              <Link to={`/user/${comment.user}`}>
-                {comment.user}
-              </Link> about {comment.anime}
-            </figcaption>
-          </figure>
-          <hr />
-        </React.Fragment>
-      ))}
+      {comments &&
+        comments.map((comment, index) => (
+          <React.Fragment key={index}>
+            <figure className="p-4">
+              <blockquote className="blockquote">
+                <p>{comment.review}</p>
+              </blockquote>
+              <figcaption className="blockquote-footer">
+                <Link to={`/user/${comment.user}`}>{comment.user}</Link> about{" "}
+                {comment.anime}
+              </figcaption>
+            </figure>
+            <hr />
+          </React.Fragment>
+        ))}
     </Container>
   );
 };
@@ -317,7 +392,7 @@ const Anime: React.FC = () => {
 
   useEffect(() => {
     fetchData(`/api/anime/${id}`)
-      .then(data => {
+      .then((data) => {
         if (data.status === 404) {
           navigate("/notfound");
         } else {
@@ -351,40 +426,47 @@ const Anime: React.FC = () => {
   );
 };
 
-
 function DisplayCharacters({ characters }: { characters: any }) {
-  return <Col lg={4} className="mb-3">
-    <Card className="bg-dark text-white">
-      <Card.Img src={`${import.meta.env.VITE_API_URL}${characters.img}`} alt={characters.name} />
-      <Card.ImgOverlay>
-        <div className="overlay show">
-          <Card.Title className="text-center">{characters.name}</Card.Title>
-          <Card.Text className="text-center">{characters.description}</Card.Text>
-        </div>
-      </Card.ImgOverlay>
-    </Card>
-  </Col>
+  return (
+    <Col lg={4} className="mb-3">
+      <Card className="bg-dark text-white">
+        <Card.Img
+          src={`${import.meta.env.VITE_API_URL}${characters.img}`}
+          alt={characters.name}
+        />
+        <Card.ImgOverlay>
+          <div className="overlay show">
+            <Card.Title className="text-center">{characters.name}</Card.Title>
+            <Card.Text className="text-center">
+              {characters.description}
+            </Card.Text>
+          </div>
+        </Card.ImgOverlay>
+      </Card>
+    </Col>
+  );
 }
 
 const Characters: React.FC<{ id: string }> = ({ id }) => {
   const [characters, setCharacters] = useState<any[]>([]);
 
   useEffect(() => {
-    api.get(`/api/anime/characters/${id}`)
-      .then(response => setCharacters(response.data))
+    api
+      .get(`/api/anime/characters/${id}`)
+      .then((response) => setCharacters(response.data))
       .catch(console.error);
   }, [id]);
 
   return (
     <Row>
-      {
-        characters.map((character: any) => (
-          <DisplayCharacters key={character.id_character} characters={character} />
-        ))
-      }
+      {characters.map((character: any) => (
+        <DisplayCharacters
+          key={character.id_character}
+          characters={character}
+        />
+      ))}
     </Row>
   );
 };
-
 
 export default Anime;

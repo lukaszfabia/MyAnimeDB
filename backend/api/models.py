@@ -75,6 +75,21 @@ class Genre(models.Model):
 
 
 class Anime(models.Model):
+    """represents an anime.
+    * id_anime (AutoField): Primary key for the anime.
+    * type (CharField): Type of the anime (e.g., TV, OVA).
+    * title (CharField): Title of the anime.
+    * alternative_title (CharField): Alternative title of the anime.
+    * status (CharField): Status of the anime (e.g., Finished Airing, Currently Airing).
+    * description (TextField): Description of the anime.
+    * img_url (URLField): URL of the anime's image.
+    * duration (FloatField): Duration of the anime in minutes.
+    * episodes (IntegerField): Number of episodes in the anime.
+    * rating (FloatField): Rating of the anime.
+    * genres (ManyToManyField): Genres associated with the anime.
+    * popularity (IntegerField): Popularity score of the anime.
+    """
+
     ANIME_TYPE = [
         ("TV", "TV"),
         ("OVA", "OVA"),
@@ -159,8 +174,8 @@ class UsersAnime(models.Model):
 class AnimeReviews(models.Model):
     """represents a review of an anime
     * user - the user that wrote the review (UserProfile)
-    * anime - the anime that the review is about (Anime)
-    * review - the review itself (str)
+    * anime (fk) - the anime that the review is about (Anime)
+    * review (TextField) - the review itself (str)
     """
 
     id_review = models.AutoField(primary_key=True)
@@ -174,10 +189,10 @@ class AnimeReviews(models.Model):
 
 class Post(models.Model):
     """represents a post
-    * user - the user (staff only) that wrote the post
-    * title - the title of the post (str)
-    * content - the content of the post (str)
-    * date_posted - the date the post was posted (DateTime)
+    * user (fk) - the user (staff only) that wrote the post
+    * title (CharField) - the title of the post (str)
+    * content (TextField) - the content of the post (str)
+    * date_posted (Date/Time) - the date the post was posted (DateTime)
     """
 
     id_post = models.AutoField(primary_key=True)

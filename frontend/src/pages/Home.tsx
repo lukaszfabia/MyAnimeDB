@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
 import WelcomeContent from "../components/carousel/Caroulsel";
-import MostPopular from "../components/content/showcase";
+import MostPopular from "../components/content/Showcase";
 import Footer from "../components/Footer";
 import api from "../scripts/api";
 import { Card, Container } from "react-bootstrap";
@@ -11,7 +11,8 @@ const Content: React.FC = () => {
   const [posts, setPosts] = useState<PostsProps[]>([]);
 
   useEffect(() => {
-    api.get("/api/user/posts/")
+    api
+      .get("/api/user/posts/")
       .then((response) => {
         console.log(response.data);
         setPosts(response.data);
@@ -36,19 +37,20 @@ const Content: React.FC = () => {
               <Card.Header className="display-5">{post.title}</Card.Header>
               <Card.Body>
                 <blockquote className="blockquote mb-0">
-                  <p>
-                    {post.content}
-                  </p>
+                  <p>{post.content}</p>
                   <footer className="blockquote-footer py-3">
-                    <cite title="Source Title">Administration, <span>{formatDate(post.date_posted).join(", ")}</span></cite>
+                    <cite title="Source Title">
+                      Administration,{" "}
+                      <span>{formatDate(post.date_posted).join(", ")}</span>
+                    </cite>
                   </footer>
                 </blockquote>
               </Card.Body>
             </Card.Body>
           </Card>
-        </Container >
+        </Container>
       ))}
-    </Container >
+    </Container>
   );
 };
 

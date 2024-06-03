@@ -3,14 +3,19 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ProfileProps, StatsData, fetchData } from "../scripts";
 import Footer from "../components/Footer";
-import "./favanime.css";
+import "../styles/favanime.css";
 import ProtectedRoute from "../components/context/PrivateRoute";
 import NoPage from "./NotFoundPage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 
-
-const ProfileData: React.FC<ProfileProps> = ({ username, email, avatar, bio, is_staff }) => {
+const ProfileData: React.FC<ProfileProps> = ({
+  username,
+  email,
+  avatar,
+  bio,
+  is_staff,
+}) => {
   const { name } = useParams<{ name: string }>();
   return (
     <Container
@@ -20,7 +25,9 @@ const ProfileData: React.FC<ProfileProps> = ({ username, email, avatar, bio, is_
         borderRadius: "50px",
       }}
     >
-      <h2 className="text-center">{username} {is_staff ? <FontAwesomeIcon icon={faCheckCircle} /> : null}</h2>
+      <h2 className="text-center">
+        {username} {is_staff ? <FontAwesomeIcon icon={faCheckCircle} /> : null}
+      </h2>
       <hr />
       <Row className="d-flex justify-content-center align-items-center mb-4">
         <img
@@ -42,28 +49,29 @@ const ProfileData: React.FC<ProfileProps> = ({ username, email, avatar, bio, is_
         <p>{email}</p>
       </Row>
       <hr />
-      {name === localStorage.getItem("username") || name == sessionStorage.getItem("username") ? <ProtectedRoute error={<NoPage />}>
-        <Row className="py-4">
-          <Col
-            xs={6}
-            className="d-flex justify-content-center align-items-center"
-          >
-            <Link to={`/profile/${username}/myanime`}>
-              <Button variant="outline-success">
-                My anime
-              </Button>
-            </Link>
-          </Col>
-          <Col
-            xs={6}
-            className="d-flex justify-content-center align-items-center"
-          >
-            <Button variant="outline-primary">
-              My manga
-            </Button>
-          </Col>
-        </Row>
-      </ProtectedRoute> : <></>}
+      {name === localStorage.getItem("username") ||
+      name == sessionStorage.getItem("username") ? (
+        <ProtectedRoute error={<NoPage />}>
+          <Row className="py-4">
+            <Col
+              xs={6}
+              className="d-flex justify-content-center align-items-center"
+            >
+              <Link to={`/profile/${username}/myanime`}>
+                <Button variant="outline-success">My anime</Button>
+              </Link>
+            </Col>
+            <Col
+              xs={6}
+              className="d-flex justify-content-center align-items-center"
+            >
+              <Button variant="outline-primary">My manga</Button>
+            </Col>
+          </Row>
+        </ProtectedRoute>
+      ) : (
+        <></>
+      )}
     </Container>
   );
 };
@@ -126,7 +134,6 @@ const HeadingForStats: React.FC<HeadingForStatsProps> = ({ name, text }) => {
     </Col>
   );
 };
-
 
 const AnimeTitle: React.FC<any> = ({ id, title, imgUrl }) => {
   return (

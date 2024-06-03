@@ -17,7 +17,7 @@ import {
 import { Link } from "react-router-dom";
 import api from "../scripts/api";
 import { CheckboxProps, AnimePropertyData } from "../scripts";
-
+import "../styles/pagination.css";
 
 const InfoColumn: React.FC<{
   value: string;
@@ -49,8 +49,9 @@ const AnimeResult: React.FC<{
 }> = ({ id, title, type, status, episodes, img, rating, isHeader }) => {
   return (
     <Row
-      className={`my-3 mb-4 text-center ${isHeader ? "justify-content-center" : "justify-content-md-start"
-        }`}
+      className={`my-3 mb-4 text-center ${
+        isHeader ? "justify-content-center" : "justify-content-md-start"
+      }`}
     >
       <Col xs={12} sm={4} md={2} className="text-center">
         {!isHeader && (
@@ -99,8 +100,9 @@ const HeaderAnime: React.FC<{
             >
               <Button
                 variant="no-bg"
-                className={`text-white text-center px-2 py-1 ${activeButton === sortKey ? "active" : ""
-                  }`}
+                className={`text-white text-center px-2 py-1 ${
+                  activeButton === sortKey ? "active" : ""
+                }`}
                 onClick={() => handleButton(sortKey)}
               >
                 <h5>
@@ -134,7 +136,7 @@ const ExampleAnime: React.FC = () => {
     rating: true,
   });
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 2;
 
   useEffect(() => {
     const keyword = new URLSearchParams(window.location.search).get("keyword");
@@ -215,7 +217,7 @@ const ExampleAnime: React.FC = () => {
         ))}
       </Row>
 
-      <Pagination className="py-4 justify-content-center">
+      <Pagination className="py-4 mb-3 justify-content-center">
         <Pagination.First onClick={() => handlePageChange(1)} />
         <Pagination.Prev
           onClick={() =>
@@ -242,7 +244,6 @@ const ExampleAnime: React.FC = () => {
         />
         <Pagination.Last onClick={() => handlePageChange(pageNumbers.length)} />
       </Pagination>
-      <div className="mb-5 py-5"></div>
     </Container>
   );
 };
