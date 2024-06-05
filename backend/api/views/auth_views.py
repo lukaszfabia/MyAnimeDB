@@ -59,9 +59,6 @@ class SettingsView(generics.UpdateAPIView):
         return self.partial_update(request, *args, **kwargs)
 
 
-# User = get_user_model()
-
-
 class CustomPasswordResetView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 

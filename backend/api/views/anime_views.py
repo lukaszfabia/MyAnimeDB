@@ -12,20 +12,57 @@ from api.stats import AnalyseAnime
 
 
 class SearchAnime(generics.ListAPIView):
-    """Get all animes"""
+    """
+    API view to search for anime.
+
+    This view returns a list of anime based on the provided search keywords.
+
+    Parameters:
+        - keywords (str): The search keywords to filter the anime.
+
+    Returns:
+        A JSON response containing a list of serialized anime objects.
+
+    Endpoint example:
+        GET /api/anime/keywords=death
+
+    Notes:
+        - Allow any user to access this view.
+
+    """
 
     serializer_class = AnimeSerializer
     permission_classes = [AllowAny]
 
+    def get_queryset(self):
+        preprocess_query = Preprocess(self.kwargs.get("keywords", "all"))
+        return preprocess_query.get_result()
+
     def get(self, request, *args, **kwargs):
-        preprocess_query = Preprocess(kwargs.get("keywords", "all"))
-        queryset = preprocess_query.get_result()
+        queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class GetAnimeByTitle(generics.ListAPIView):
-    """Get an anime by title"""
+    """
+    Api view to get anime by title.
+
+    This view returns a list of anime based on the provided title.
+
+    Parameters:
+        - title (str): The title of the anime to filter.
+
+    Returns:
+        A JSON response containing a list of serialized anime objects.
+
+    Endpoint example:
+
+        GET /api/anime/title/death note
+
+    Notes:
+        - Unused, for future use.
+    """
 
     serializer_class = AnimeSerializer
     permission_classes = [AllowAny]
@@ -34,7 +71,24 @@ class GetAnimeByTitle(generics.ListAPIView):
 
 
 class GetAnimeById(generics.RetrieveAPIView):
-    """Get an anime by ID"""
+    """
+    Api view to get anime by id.
+
+    This view returns a object of anime based on the provided id.
+
+    Parameters:
+        - id_anime (int): The id of the anime to filter.
+
+    Returns:
+        A JSON response containing searched anime.
+
+    Endpoint example:
+
+        GET /api/anime/1
+
+    Notes:
+        - Allow any user to access this view.
+    """
 
     serializer_class = AnimeSerializer
     permission_classes = [AllowAny]
@@ -43,12 +97,38 @@ class GetAnimeById(generics.RetrieveAPIView):
 
 
 class GetAllAnimeProps(generics.ListAPIView):
-    """Get all genres for anime"""
+    """
+    API view to get all genres, types, and status for anime.
+
+    This view returns a JSON response containing the genres, types, and status
+    available for anime in the database.
+
+    Methods:
+    - get_genres: Get all genres for anime.
+    - get_types: Get all types for anime.
+    - get_status: Get all status for anime.
+    - get: Handle GET requests and return the JSON response.
+
+    Returns:
+        A JSON response containing the genres, types, and status for anime.
+
+    Endpoint example:
+        GET /api/anime/props/
+
+    Notes:
+        - Allow any user to access this view.
+    """
 
     permission_classes = [AllowAny]
     queryset = []
 
     def get_genres(self):
+        """
+        Get all genres for anime.
+
+        Returns:
+        A dictionary containing the genres with their respective IDs and names.
+        """
         return {
             "genres": [
                 {"id": genre.id_genre, "name": genre.name}
@@ -57,6 +137,12 @@ class GetAllAnimeProps(generics.ListAPIView):
         }
 
     def get_types(self):
+        """
+        Get all types for anime.
+
+        Returns:
+        A dictionary containing the types with their respective IDs and names.
+        """
         return {
             "types": [
                 {"id": id, "name": type[1]} for id, type in enumerate(Anime.ANIME_TYPE)
@@ -64,6 +150,12 @@ class GetAllAnimeProps(generics.ListAPIView):
         }
 
     def get_status(self):
+        """
+        Get all status for anime.
+
+        Returns:
+        A dictionary containing the status with their respective IDs and names.
+        """
         return {
             "status": [
                 {"id": id, "name": status[1]}
@@ -72,12 +164,40 @@ class GetAllAnimeProps(generics.ListAPIView):
         }
 
     def get(self, request, *args, **kwargs):
+        """
+        Handle GET requests and return the JSON response.
+
+        Returns:
+        A JSON response containing the genres, types, and status for anime.
+        """
         result = [self.get_genres(), self.get_types(), self.get_status()]
         return Response({"props": result}, status=status.HTTP_200_OK)
 
 
 class Review(generics.CreateAPIView, generics.ListAPIView, generics.DestroyAPIView):
-    """Add review to anime or update it if it already exists, get all reviews for anime"""
+    """
+    Add review to anime or update it if it already exists, get all reviews for anime.
+
+    This class provides the functionality to add a review to an anime or update an existing review,
+    as well as retrieve all reviews for a specific anime.
+
+    Parameters:
+        - id: The ID of the anime to add or retrieve reviews for.
+
+    Methods:
+        get_queryset(): Retrieves the queryset of reviews for the anime.
+        perform_create(serializer): Performs the creation of a new review.
+        perform_destroy(instance): Performs the deletion of a review.
+
+    Returns:
+        A JSON response containing the reviews for the anime.
+
+    Endpoint example:
+        (GET, PUT, DELETE) /api/anime/reviews/1
+
+    Notes:
+        - Only authenticated users can access this view.
+    """
 
     permission_classes = [IsAuthenticated]
     serializer_class = AnimeReviewSerializer
@@ -112,7 +232,27 @@ class Review(generics.CreateAPIView, generics.ListAPIView, generics.DestroyAPIVi
 
 
 class StatsForAnime(generics.RetrieveAPIView):
-    """Compute average score for anime"""
+    """
+    Retrieve and compute statistics for a specific anime.
+
+    This view retrieves information about a specific anime, including its title,
+    average score, and popularity. The average score is computed by analyzing the
+    ratings of the anime, and the popularity is determined based on the title.
+
+    Endpoint example: /api/anime/score/<id> (GET)
+
+    Parameters:
+        - id: The ID of the anime to retrieve statistics for.
+
+    Returns:
+        A JSON response containing the following fields:
+        - title: The title of the anime.
+        - average_score: The average score of the anime.
+        - popularity: The popularity of the anime.
+
+    Notes:
+        - AllowAny: This view can be accessed by any user, authenticated or not.
+    """
 
     permission_classes = [AllowAny]
     queryset = UsersAnime.objects.all()
@@ -132,7 +272,20 @@ class StatsForAnime(generics.RetrieveAPIView):
 
 
 class MostPopularAnimes(generics.ListAPIView):
-    """Get 3 most popular anime"""
+    """
+    Api view to get the most popular animes.
+
+    This view returns a list of the most popular animes in the database. It takes
+    the top 3 animes based on their popularity.
+
+    Endpoint example: /api/anime/most_popular/ (GET)
+
+    Returns:
+        A JSON response containing a list of serialized anime objects.
+
+    Notes:
+        - AllowAny: This view can be accessed by any user, authenticated or not.
+    """
 
     permission_classes = [AllowAny]
     serializer_class = AnimeSerializer
@@ -147,7 +300,19 @@ class MostPopularAnimes(generics.ListAPIView):
 
 
 class RandomAnime(generics.RetrieveAPIView):
-    """Random anime for the day"""
+    """
+    Api view to get a random anime.
+
+    This view returns a random anime from the database.
+
+    Endpoint example: /api/anime/random/ (GET)
+
+    Returns:
+        A JSON response containing a serialized anime object.
+
+    Notes:
+        - AllowAny: This view can be accessed by any user, authenticated or not.
+    """
 
     permission_classes = [AllowAny]
     serializer_class = AnimeSerializer
@@ -160,7 +325,23 @@ class RandomAnime(generics.RetrieveAPIView):
 
 
 class AnimeCharacters(generics.ListAPIView):
-    """Get all characters for anime"""
+    """
+    Api view to get anime characters.
+
+    This view returns a list of characters for a specific anime.
+
+    Parameters:
+        - id (int): The id of the anime to filter.
+
+    Endpoint example: /api/anime/characters/1 (GET)
+
+    Returns:
+        A JSON response containing a list of serialized character objects.
+
+    Notes:
+        - AllowAny: This view can be accessed by any user, authenticated or not.
+
+    """
 
     permission_classes = [AllowAny]
     serializer_class = CharacterSerializer

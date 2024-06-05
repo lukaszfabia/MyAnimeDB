@@ -2,6 +2,7 @@ from typing import List
 
 from .models import *
 from django.db.models import Q
+from django.db.models import Count
 
 from api.stats import AnalyseAnime
 import re
@@ -82,26 +83,39 @@ class Preprocess:
         Returns:
             List[Anime]: A list of anime objects that match the search criteria.
         """
-        query = Q()
-        print(self.types)
+
+        # default queryset
+        queryset = Anime.objects.all()
 
         if self.genres:
-            query &= Q(genres__name__in=self.genres)
+            # creating a subquery to filter out anime that don't have all the selected genres
+            subquery = (
+                Anime.objects.filter(genres__name__in=self.genres)
+                .annotate(
+                    num_genres=Count("genres")
+                )  # compute the number of genres for each anime
+                .values_list("id_anime", flat=True)  # get the id of each anime
+            )
+
+            # filter out anime that don't have all the selected genres
+            queryset = (
+                queryset.filter(id_anime__in=subquery, genres__name__in=self.genres)
+                .annotate(num_genres=Count("genres"))
+                .filter(num_genres=len(self.genres))
+            )
 
         if self.statuses:
-            query &= Q(status__in=self.statuses)
+            queryset = queryset.filter(status__in=self.statuses)
 
         if self.types:
-            query &= Q(type__in=self.types)
+            queryset = queryset.filter(type__in=self.types)
 
         if self.keyword:
-            keyword_query = Q(title__icontains=self.keyword) | Q(
+            queryset = queryset.filter(title__icontains=self.keyword) | queryset.filter(
                 alternative_title__icontains=self.keyword
             )
-            query &= keyword_query
 
-        queryset = Anime.objects.filter(query).distinct().order_by("title")
-
+        queryset = queryset.distinct().order_by("title")
         return self.compute_rating(queryset) if queryset else []
 
     def compute_rating(self, queryset):

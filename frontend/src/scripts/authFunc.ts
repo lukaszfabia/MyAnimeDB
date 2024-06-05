@@ -1,6 +1,12 @@
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants/const";
 import api from "./api";
 
+/**
+ * Registers a new user.
+ * 
+ * @param e - The event object.
+ * @param navigate - A function to navigate to a different path.
+ */
 export const register = async (e: any, navigate: (path: string) => void) => {
     e.preventDefault();
     const formData = new FormData();
@@ -31,6 +37,12 @@ export const register = async (e: any, navigate: (path: string) => void) => {
 };
 
 
+/**
+ * Logs in the user with the provided credentials.
+ * @param elem - The event object representing the form submission.
+ * @param rememberMe - A boolean indicating whether to remember the user's login.
+ * @param navigate - A function to navigate to a specific path.
+ */
 export const login = async (elem: any, rememberMe: boolean, navigate: (path: string) => void) => {
     elem.preventDefault()
     await api.post("/api/auth/token/", {
@@ -62,6 +74,11 @@ export const login = async (elem: any, rememberMe: boolean, navigate: (path: str
     });
 }
 
+/**
+ * Updates the user profile with the provided form data.
+ * @param e - The event object.
+ * @param navigate - A function to navigate to a different path.
+ */
 export const updateProfile = async (e: any, navigate: (path: string) => void) => {
     e.preventDefault();
     const username = e.target.username.value;
@@ -108,6 +125,13 @@ export const updateProfile = async (e: any, navigate: (path: string) => void) =>
         });
 }
 
+/**
+ * Updates the rating and status of an anime.
+ * 
+ * @param e - The event object.
+ * @param animeId - The ID of the anime.
+ * @param navigate - A function to navigate to a different path.
+ */
 export const updateRating = async (e: any, animeId: number, navigate: (path: string) => void) => {
     e.preventDefault();
     const rating = e.target.rating.value;

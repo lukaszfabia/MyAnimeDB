@@ -4,7 +4,7 @@ from .views.general_views import NoPage
 
 
 urlpatterns = [
-    # path("<str:title>", GetAnimeByTitle.as_view(), name="anime_by_title"), unused
+    path("title/<str:title>", GetAnimeByTitle.as_view(), name="anime_by_title"),
     path("<int:id_anime>", GetAnimeById.as_view(), name="anime_by_id"),
     path("reviews/<int:id>", Review.as_view(), name="add_review"),
     path("score/<int:id>", StatsForAnime.as_view(), name="add_review"),
