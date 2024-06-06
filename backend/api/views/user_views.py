@@ -18,7 +18,24 @@ from api.user_serializers import (
 class AddAnimeToUser(
     generics.CreateAPIView, generics.UpdateAPIView, generics.RetrieveAPIView
 ):
-    """Add anime to user or update it if it already exists"""
+    """Api view for adding anime to user list
+    
+    TODO: Implement DELETE method
+    
+    Parameters:
+        - id (int): id of anime
+    
+    Returns:
+        - Response: status code 201 if anime added, 200 if updated, 404 if not found
+        
+    Endpoint example:
+        - /api/user/add-anime/<int:id>
+        
+    Notes:
+        - This view is allowed for authenticated users
+        - If anime is already on list, it will be updated
+    
+    """
 
     serializer_class = UserAnimeSerializer
     permission_classes = [IsAuthenticated]
@@ -29,6 +46,9 @@ class AddAnimeToUser(
         return anime, profile
 
     def get(self, request, *args, **kwargs):
+        """
+        
+        """
         try:
             anime, profile = self.get_anime_and_profile(request, kwargs["id"])
             users_anime = UsersAnime.objects.get(user=profile, id_anime=anime)
@@ -41,6 +61,7 @@ class AddAnimeToUser(
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
+        """Adding anime to user list with POST request, with given parameters"""
         anime, profile = self.get_anime_and_profile(request, kwargs["id"])
 
         users_anime, created = UsersAnime.objects.get_or_create(
@@ -72,6 +93,7 @@ class AddAnimeToUser(
             )
 
     def update(self, request, *args, **kwargs):
+        """Changing state of anime for user with PUT request, with given parameters"""
         anime, profile = self.get_anime_and_profile(request, kwargs["id"])
         users_anime = UsersAnime.objects.get(user=profile, id_anime=anime)
 
@@ -99,7 +121,18 @@ class AddAnimeToUser(
 
 
 class UsersAnimeList(generics.ListAPIView):
-    """Get all animes for user"""
+    """Api view for getting all animes for user 
+    
+    Returns:
+        - Response: List of all animes for user
+        
+    Endpoint example:
+        - /api/user/anime/list/
+        
+    Notes:
+        - This view is allowed for authenticated users
+    
+    """
 
     permission_classes = [IsAuthenticated]
     serializer_class = UserAnimeSerializer
@@ -113,7 +146,21 @@ class UsersAnimeList(generics.ListAPIView):
 
 
 class IsOnUsersList(generics.RetrieveAPIView):
-    """Check if anime is on user's list"""
+    """Api view for checking if anime is on user list
+    
+    Parameters:
+        - id (int): id of anime
+        
+    Returns:
+        - Response: status code 200 if anime is on list, 204 if not
+        
+    Endpoint example:
+        - /api/user/has-anime/<int:id>
+        
+    Notes:
+        - This view is allowed for authenticated users
+    
+    """
 
     permission_classes = [IsAuthenticated]
     serializer_class = AnimeSerializer
@@ -133,7 +180,20 @@ class IsOnUsersList(generics.RetrieveAPIView):
 
 
 class UserStats(generics.ListAPIView):
-    """includes total time spent during watching, fav genre, watched episodes"""
+    """Api view for getting user stats
+    
+    Get all user stats like down below
+    
+    Parameters:
+        - username (str): username of user
+    
+    Returns:
+        - Response: User stats
+        
+    Endpoint example:
+        - /api/user/stats/<username>
+    
+    """
 
     permission_classes = [AllowAny]
 
@@ -153,7 +213,21 @@ class UserStats(generics.ListAPIView):
 
 
 class FavoriteAnime(generics.ListAPIView):
-    """Get all favorite animes for user"""
+    """Api view for getting favorite animes for user
+    
+    Parameters:
+        - username (str): username of user
+        
+    Returns:
+        - Response: List of favorite animes
+        
+    Endpoint example:
+        - /api/user/fav-anime/<str:username>
+        
+    Notes:
+        - This view is allowed for all users
+    
+    """
 
     permission_classes = [AllowAny]
     queryset = UsersAnime.objects.all()
@@ -170,6 +244,21 @@ class FavoriteAnime(generics.ListAPIView):
 
 
 class IsFavoriteAnime(generics.RetrieveAPIView):
+    """
+    Api view for checking if anime is favorite for user
+    
+    Parameters:
+        - id (int): id of anime
+        
+    Returns:
+        - Response: status code 200 if anime is favorite, 204 if not
+        
+    Endpoint example:
+        - /api/user/is-fav-anime/<int:id>
+    
+    Notes:
+        - This view is allowed for authenticated users
+    """
     permission_classes = [IsAuthenticated]
     queryset = UsersAnime.objects.all()
     serializer_class = AnimeSerializer
@@ -186,7 +275,21 @@ class IsFavoriteAnime(generics.RetrieveAPIView):
 
 
 class UserDataView(generics.RetrieveAPIView):
-    """Read only info for profile"""
+    """Api view for getting user profile data
+    
+    Parameters:
+        - username (str): username of user
+        
+    Returns:
+        - Response: User profile data
+        
+    Endpoint example: 
+        - /api/user/<username>
+        
+    Notes:
+        - This view is allowed for all users
+    
+    """
 
     serializer_class = UserProfileSerializer
     permission_classes = [AllowAny]
@@ -200,6 +303,21 @@ class UserDataView(generics.RetrieveAPIView):
 
 
 class GetPosts(generics.ListAPIView):
+    """
+    Api view for getting all posts from administration
+    
+    - can be developed to get posts from all users
+    
+    Returns:
+        - Response: List of all posts, sorted by date_posted
+        
+    Endpoint exmaple:
+        - /api/user/posts/
+    
+    Notes: 
+       - This view is allowed for all users
+    
+    """
     permission_classes = [AllowAny]
     queryset = Post.objects.order_by("-date_posted")
     serializer_class = PostSerializer

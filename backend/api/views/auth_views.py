@@ -19,7 +19,28 @@ from django.core.mail import send_mail
 
 
 class RegistrationView(generics.CreateAPIView):
-    """Register a user in the database"""
+    """Api view for user registration
+    
+    This api view is used for user registration. It requires user to provide email, username and password.
+    
+    Exmaple of JSON form:
+    {
+        "user": {
+            "username": "example",
+            "email": "exmaple@mail.com"
+            "password": "password"
+        }, 
+        "avatar": null,
+        "bio": "Hello, I am example user",
+    }
+    
+    Exmaple endpoint:
+        - /api/auth/register
+        
+    Returns:
+        - Response: status code 201 if user registered, 400 if user with this email already exists
+    
+    """
 
     serializer_class = UserProfileSerializer
     queryset = UserProfile.objects.all()
@@ -60,6 +81,20 @@ class SettingsView(generics.UpdateAPIView):
 
 
 class CustomPasswordResetView(generics.CreateAPIView):
+    """Api view for password reset
+    
+    Preprocesses form with email and sends email with link to reset password from websites email 'myanimedb2024js@gmail.com'
+    Link contains token and uid to reset password.
+    
+    Example of JSON form:
+    {
+        "email": "example@mail.cośm"
+    }
+    
+    Example endpoint:
+        - /api/auth/password_reset/
+    
+    """
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
@@ -89,6 +124,22 @@ class CustomPasswordResetView(generics.CreateAPIView):
 
 
 class PasswordResetConfirmView(generics.CreateAPIView):
+    """Api view for password reset confirmation
+    
+    Sets new password for user if token is valid, user is indentified by uid
+    
+    Example of JSON form:
+    {
+        "new_password": "password"
+        "uid": "Mg",
+        "token": "4zv-7f"
+    }
+    
+    Example endpoint:
+    
+        - /api/auth/password_reset_confirm/
+    """
+    
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):

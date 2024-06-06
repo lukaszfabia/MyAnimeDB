@@ -36,14 +36,11 @@ class MapOfAServer(ListAPIView):
     """General view of the server"""
 
     permission_classes = [AllowAny]
-    queryset = []
+    queryset = [{"route": "api/", "description": "Main view of all routes in the API"},
+            {"route": "admin/", "description": "Admin page"},]
 
     def get(self, request):
-        endpoints = [
-            {"route": "api/", "description": "Main view of all routes in the API"},
-            {"route": "admin/", "description": "Admin page"},
-        ]
-        return Response(endpoints)
+        return Response(self.queryset)
 
 
 # cdwb tkyn hofc rsxx
