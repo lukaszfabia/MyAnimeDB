@@ -5,8 +5,8 @@
 **Ogólnie o projekcie**. 
 
 Projekt składa się z dwóch części:
-- Frontend `(React + TypeScript + Vite, Bootstrap 5)`
-- Backend `(DRF - Django rest framework)`
+- [**Frontend**](./frontend/) `(React + TypeScript + Vite, Bootstrap 5)`
+- [**Backend**](./backend/) `(DRF - Django rest framework)`
 
 
 Jak to działa? 
