@@ -22,7 +22,7 @@ cd MyAnimeDB
 sudo docker-compose up --build
 ```
 
-**Wygląd**
+## Wygląd
 
 ![home page](appearance/home_page.png)
 
