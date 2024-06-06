@@ -4,8 +4,8 @@ Frontend `(React + TypeScript + Vite, Bootstrap 5)`
 
 ## Strona główna
 
-- [] jakieś dane, content
-- [] moze ostatnio dodane tytuły
+- [x] jakieś dane, content
+- [x] najpopularniejsze anime
 
 ## Strona z anime
 
@@ -39,7 +39,7 @@ User ma możliwość zmiany swojego avatara, bio, hasła, emaila, nazwy użytkow
 
 - [x] Logowanie
 - [x] Rejestracja
-- [] Odzyskiwanie hasła (forgot password)
+- [x] Odzyskiwanie hasła (forgot password)
 
 ## Strona ze swoją kolekcją anime
 
