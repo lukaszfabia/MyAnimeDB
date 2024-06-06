@@ -1,7 +1,6 @@
 __pycache__
 
 # frontend/.env
-backend/backend/.env
 .venv
 node_modeules
 migrations
